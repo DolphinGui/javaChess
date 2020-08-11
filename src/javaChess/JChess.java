@@ -11,18 +11,20 @@ public class JChess {
 	 * linear chess board
 	 * move validator
 	 * 	-chess pieces
-	 * 		-rook
 	 * 		-knight
-	 * 		-bishop
 	 * 		-queen
 	 * 		-king
 	 * UI of some sort, maybe terminal or gui
+	 * central game engine
+	 * stockfish implementation?
 	 * */
 	public static void main(String[] args) throws IOException {
-		LinBoard board = new LinBoard();
+	    
+		LinBoard board = new LinBoard(8,8);
 		board.setBoard();
-		Integer[] moves = board.getPiece(23).getMoves(board);
-		for(int move: moves) System.out.println(move);
+		for(Integer move: board.getPiece(12).getMoves(board)) System.out.println(move);
+		
+
 	}
 
 }

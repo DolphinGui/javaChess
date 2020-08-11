@@ -7,48 +7,58 @@ import baseChess.LinBoard;
 import baseChess.Piece;
 
 public class Pawn extends Piece {
-	public static final Integer[] move = {8};
-	private final static String name = "Pawn";
-	private final static char shorthand = 'p';
+    public Pawn(int loc, boolean fealty) {
+	super(loc, fealty);
+	// TODO Auto-generated constructor stub
+    }
+    private final static String name = "Pawn";
+    private final static char shorthand = 'p';
+    private boolean hasMoved = false;
+
+    public void setLoc(int loc) {
+	location = loc;
+	hasMoved = false;
+    }
+    
+    public String getName() {
+	return name;
+    }
+    public char getShort() {
+	return shorthand;
+    }
+
+    public Integer[] exception(LinBoard board){
+	return ArrayMan.concatAll(capture(board), initiative(board), advance(board)) ;
+    }
+
+    private Integer[] advance(LinBoard board) {
+	Integer[] direction = {0,1};
+	if(board.getPiece(direction) == null) {
+	    Integer[] results = {board.vecToInteger(direction)};
+	    return results;
+	}
+	return null;
+    }
+
+    private Integer[] initiative(LinBoard board) {
+	if (!hasMoved) {
+	    Integer[] init = {board.getWidth()*2};
+	    return init;
+	}
+	return null;
+    }
+
+    private Integer[] capture(LinBoard board) {
+	Integer[] NW = {-1,1};
+	Integer[] NE = {1,1};
 	
-	public Pawn(boolean white){
-		isFirst = white;
+	ArrayList<Integer> validX = new ArrayList<Integer>();
+	if (!board.checkFealty(this.getLoc()+7, this.isFirst)){
+	    validX.add(board.vecToInteger(NW));
 	}
-	
-	public String getName() {
-		return name;
+	if (!board.checkFealty(this.getLoc()+9, this.isFirst)){
+	    validX.add(board.vecToInteger(NE));
 	}
-	public char getShort() {
-	    return shorthand;
-	}
-	
-	public Integer[] exception(LinBoard board){
-		return ArrayMan.concatAll(capture(board), initiative(board), advance(board)) ;
-	}
-	
-	private Integer[] advance(LinBoard board) {
-		if(board.getPiece(this.getLoc() + 8) == null) {
-			return move;
-		}
-		return null;
-	}
-	
-	private Integer[] initiative(LinBoard board) {
-		if (this.getCol()==1 && board.getPiece(this.getLoc()+2)==null) {
-			Integer[] init = {16};
-			return init;
-		}
-		return new Integer[0];
-	}
-	
-	private Integer[] capture(LinBoard board) {
-		ArrayList<Integer> validX = new ArrayList<Integer>();
-		if (!board.checkFealty(this.getLoc()+7, this.isFirst)){
-			validX.add(7);
-		}
-		if (!board.checkFealty(this.getLoc()+9, this.isFirst)){
-			validX.add(9);
-		}
-		return validX.toArray(new Integer[validX.size()]);
-	}
+	return validX.toArray(new Integer[validX.size()]);
+    }
 }
