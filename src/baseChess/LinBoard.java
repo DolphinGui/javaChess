@@ -1,9 +1,9 @@
 package baseChess;
 
+import java.util.ArrayList;
 
-import vanillaChess.Bishop;
-//import vanillaChess.Pawn;
-//import vanillaChess.Rook;
+import vanillaChess.King;
+import vanillaChess.Rook;
 
 public class LinBoard {
     private Piece[] board;
@@ -15,6 +15,18 @@ public class LinBoard {
 	board = new Piece[file*rank];
 	ranks = rank; 
 	files = file; 
+    }
+    
+    public Piece[] getBoard() {
+	return board;
+    }
+    
+    public Piece[] getPieces() {
+	ArrayList<Piece> results = new ArrayList<Piece>();
+	for(Piece p:board) {
+	    if(p!=null) results.add(p);
+	}
+	return results.toArray(new Piece[results.size()]);
     }
     
     public int getWidth() {
@@ -44,7 +56,8 @@ public class LinBoard {
     
     
     public void setBoard() {
-	this.set(12, new Bishop(12, false)); //is a testing thing, remove later
+	this.set(12, new King(12, false)); //is a testing thing, remove later
+	this.set(3, new Rook(3, true));
     }
     
     public int vecToInteger(Integer[] vector) {
@@ -62,9 +75,11 @@ public class LinBoard {
     
     
     public boolean checkFealty(int loc, boolean fealty) {
-	if(board[loc]!=null) return (board[loc].getFealty()==fealty); //compares the color of a given piece with a given value, defaults to yes.
+	 //checks if piece is capturable, if null then defaults to yes.
+	if(board[loc]!=null) return (board[loc].getFealty()!=fealty);
 	return true;
     }
+    
     public Piece getPiece(int loc) {
 	return board[loc];
     }

@@ -53,10 +53,10 @@ public class Pawn extends Piece {
 	Integer[] NE = {1,1};
 	
 	ArrayList<Integer> validX = new ArrayList<Integer>();
-	if (!board.checkFealty(this.getLoc()+7, this.isFirst)){
+	if (!board.checkFealty(this.getLoc()+board.vecToInteger(NW), this.isFirst)){
 	    validX.add(board.vecToInteger(NW));
 	}
-	if (!board.checkFealty(this.getLoc()+9, this.isFirst)){
+	if (!board.checkFealty(this.getLoc()+board.vecToInteger(NE), this.isFirst)){
 	    validX.add(board.vecToInteger(NE));
 	}
 	return validX.toArray(new Integer[validX.size()]);

@@ -48,8 +48,8 @@ public class Piece{
 	
 	public Integer[] getMoves(LinBoard board) {
 	    return ArrayMan.concatAll(validator(board), exception(board));
-	};
+	}
 	public boolean isKing() {
 	    return false;
-	};
+	}
 }

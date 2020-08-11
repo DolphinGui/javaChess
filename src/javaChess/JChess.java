@@ -10,10 +10,6 @@ public class JChess {
 	/* TODO:
 	 * linear chess board
 	 * move validator
-	 * 	-chess pieces
-	 * 		-knight
-	 * 		-queen
-	 * 		-king
 	 * UI of some sort, maybe terminal or gui
 	 * central game engine
 	 * stockfish implementation?
