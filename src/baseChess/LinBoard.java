@@ -20,6 +20,9 @@ public class LinBoard {
     public Piece[] getBoard() {
 	return board;
     }
+    public int getLength() {
+	return board.length;
+    }
     
     public Piece[] getPieces() {
 	ArrayList<Piece> results = new ArrayList<Piece>();

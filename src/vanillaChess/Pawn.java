@@ -9,7 +9,6 @@ import baseChess.Piece;
 public class Pawn extends Piece {
     public Pawn(int loc, boolean fealty) {
 	super(loc, fealty);
-	// TODO Auto-generated constructor stub
     }
     private final static String name = "Pawn";
     private final static char shorthand = 'p';

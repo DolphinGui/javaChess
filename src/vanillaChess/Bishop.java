@@ -9,7 +9,6 @@ import miscFunct.ArrayMan;
 public class Bishop extends Piece {
     public Bishop(int loc, boolean fealty) {
 	super(loc, fealty);
-	// TODO Auto-generated constructor stub
     }
 
     public static final Integer[] move = {};

@@ -8,5 +8,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="libs/lanterna.jar"/>
+	<classpathentry kind="lib" path="libs/jna-5.6.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
