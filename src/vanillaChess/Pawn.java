@@ -8,7 +8,7 @@ import baseChess.Piece;
 
 public class Pawn extends Piece {
     public Pawn(int loc, boolean fealty) {
-	super(loc, fealty);
+	super(loc, fealty, "Pawn", 'p');
     }
     private final static String name = "Pawn";
     private final static char shorthand = 'p';

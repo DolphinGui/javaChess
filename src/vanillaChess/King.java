@@ -12,7 +12,7 @@ public class King extends Piece {
     
     
     public King(int loc, boolean fealty) {
-	super(loc, fealty);
+	super(loc, fealty, "King", 'y');
     }
 
     private Integer[] validator(LinBoard board) {
@@ -25,7 +25,7 @@ public class King extends Piece {
 	
 	ArrayList<Piece> stuff = new ArrayList<Piece>();
 	for(Piece p: board.getPieces()) {
-	    if(p!=this&&p.getFealty()!=this.isFirst)stuff.add(p);
+	    if(!(p instanceof King)&&p.getFealty()!=this.isFirst)stuff.add(p);
 	}
 	for(Piece p: stuff) {
 	    List<Integer> m = Arrays.asList(p.getMoves(board));

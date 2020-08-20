@@ -1,5 +1,5 @@
 package terminalChess;
-
+/*
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
-
+*/
 public class GameBoard {
 
 }

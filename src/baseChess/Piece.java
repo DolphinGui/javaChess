@@ -6,12 +6,24 @@ import miscFunct.ArrayMan;
 
 public class Piece{
 	protected int location;
+	protected String name;
+	protected char shorthand;
 	protected boolean isFirst = true;
 	Integer[][] moves = {};
 	
-	public Piece(int loc, boolean fealty) {
+	public Piece(int loc, boolean fealty, String nam, char shot) {
 	    location = loc;
 	    isFirst = fealty;
+	    name = nam;
+	    shorthand = shot;
+	}
+	
+	public char getShort() {
+	    return shorthand;
+	}
+	
+	public String getName() {
+	    return name;
 	}
 	
 	public boolean getFealty() {

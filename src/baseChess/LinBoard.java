@@ -2,9 +2,6 @@ package baseChess;
 
 import java.util.ArrayList;
 
-import vanillaChess.King;
-import vanillaChess.Rook;
-
 public class LinBoard {
     private Piece[] board;
     private int ranks; //length
@@ -57,12 +54,6 @@ public class LinBoard {
 	return true;
     }
     
-    
-    public void setBoard() {
-	this.set(12, new King(12, false)); //is a testing thing, remove later
-	this.set(3, new Rook(3, true));
-    }
-    
     public int vecToInteger(Integer[] vector) {
 	// This takes a 2 element vector and transforms it into an integer. it ignores all other elements.
 	return vector[0]+vector[1]*files;
@@ -84,6 +75,7 @@ public class LinBoard {
     }
     
     public Piece getPiece(int loc) {
+	if(!inBounds(loc)) return null;
 	return board[loc];
     }
     public Piece getPiece(Integer[] vec) {

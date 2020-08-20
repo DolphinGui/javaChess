@@ -8,7 +8,7 @@ import miscFunct.ArrayMan;
 
 public class Rook extends Piece {
     public Rook(int loc, boolean fealty) {
-	super(loc, fealty);
+	super(loc, fealty, "Rook", 'r');
     }
 
     public static final Integer[] move = {};
@@ -23,7 +23,10 @@ public class Rook extends Piece {
 	return name;
     }
 
-
+    private boolean comp(int n, int m, boolean greater) {
+	if(greater) return (n>m);
+	else return (n<m);
+    }
     
     private Integer[] move(LinBoard board, boolean right, boolean rank) {
 	ArrayList<Integer> moves = new ArrayList<Integer>();
@@ -44,7 +47,7 @@ public class Rook extends Piece {
 		direction[1] = 1;
 	    }
 	}
-	for(int i=this.getLoc()+board.vecToInteger(direction); i!=endpoint; i+=board.vecToInteger(direction)) {
+	for(int i=this.getLoc()+board.vecToInteger(direction); comp(i, endpoint, !rank); i+=board.vecToInteger(direction)) {
 	    Piece p = board.getPiece(i);
 	    if(p==null) {
 		moves.add(i);

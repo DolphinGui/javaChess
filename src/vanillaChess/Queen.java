@@ -9,7 +9,7 @@ import miscFunct.ArrayMan;
 public class Queen extends Piece {
 
     public Queen(int loc, boolean fealty) {
-	super(loc, fealty);
+	super(loc, fealty, "Queen", 'x');
     }
 
     private Integer[] diag(int i, boolean opposite) {

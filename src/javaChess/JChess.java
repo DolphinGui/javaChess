@@ -1,8 +1,7 @@
 package javaChess;
 import java.io.IOException;
 
-import baseChess.LinBoard;
-import terminalChess.ChessTerminal;
+//import terminalChess.ChessTerminal;
 import vanillaChess.Game;
 
 public class JChess {
@@ -16,7 +15,7 @@ public class JChess {
 	    
 		Game chess = new Game();
 		chess.init();
-		System.in.read();
+		System.out.println(chess.turn(6, 7));
 
 	}
 

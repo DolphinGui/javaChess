@@ -8,16 +8,11 @@ import miscFunct.ArrayMan;
 
 public class Bishop extends Piece {
     public Bishop(int loc, boolean fealty) {
-	super(loc, fealty);
+	super(loc, fealty, "bishop", 'b');
     }
 
     public static final Integer[] move = {};
     private final static String name = "Bishop";
-    private final static char shorthand = 'b';
-
-    public char getShort() {
-	return shorthand;
-    }
 
     public String getName() {
 	return name;

@@ -11,7 +11,7 @@ public class Knight extends Piece {
     Integer[][] moves = {{-1,-2},{-2,-1},{-2,1},{-1,2},{1,-2},{2,-1},{2,1},{1,2}};
     
     public Knight(int loc, boolean fealty) {
-	super(loc, fealty);
+	super(loc, fealty, "Knight", 'k');
     }
 
     private Integer[] validator(LinBoard board) {
