@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class Game {
@@ -17,7 +18,7 @@ public class Game {
     private King whiteKing;
     private King blackKing;
     private boolean whiteTurn;
-    
+
     public void init() throws IOException {
 	config = new File("./assets/board.brd");
 	boardDefault = FileRead.readFile(config, StandardCharsets.UTF_8);
@@ -25,7 +26,7 @@ public class Game {
 	this.boardSet();
     }
 
-    
+
     private void boardSet() {
 	for(int i=0; i<internboard.getLength();i++) {
 	    boolean white = Character.isUpperCase(boardDefault.get(i)); //uppercases are white
@@ -47,57 +48,98 @@ public class Game {
     public int turn(int loc, int origin) {
 	//0 is successful, 1 is failed, 2 is check, and 3 is checkmate
 	boolean mate = check(whiteTurn);
-	if(mate && trap()) return 3;
+	if(mate && trap(whiteTurn)) return 3;
 	else if(mate)return 2;
-	else if(move(loc, origin)) {
-	    whiteTurn = !whiteTurn; 
-	    return 0;
-	} else return 1;
+	else return move(loc, origin);
     }
 
-    public boolean move(int loc, int origin) {
+    public int move(int loc, int origin) {
+	//0 is successful, 1 is failed, 2 is check
+	LinBoard bufferboard = internboard.copy();
 	Piece p = internboard.getPiece(origin);
-	if(internboard.checkFealty(origin, whiteTurn)) return false; //checks if it's the piece's turn
+	if(internboard.checkFealty(origin, whiteTurn)) return 1; //checks if it's the piece's turn
 	for(Integer m: p.getMoves(internboard)) { 
-	    if(m+origin==loc) {      //validates that the resulting location is a valid move
-		if(check(whiteTurn))return false; //validates no checkmate
-		internboard.set(loc, p);
-		p.setLoc(loc);
-		return true;
+	    if(m==loc) {      //validates that the resulting location is a valid move
+		mv(loc, origin, bufferboard);
+		if(check(whiteTurn, bufferboard)) return 2;//validates no checkmate
+		internboard.setBoard(bufferboard.getBoard());
+		whiteTurn = !whiteTurn; 
+		return 0;
 
 	    }
 	}
+	return 1;
+    }
+
+    private void mv(int loc, int origin, LinBoard board) {
+	board.set(loc, board.getPiece(origin));
+	board.set(origin, null);
+	board.getPiece(loc).setLoc(loc);
+    }
+
+    public boolean checkmate() {
+	if(trap(whiteTurn)&&check(whiteTurn)) return true;
 	return false;
     }
-    /*
+    ///*
     @SuppressWarnings("unused")
     private void printInternboard() { //this is a debug function. comment out later.
-	int i = 0;
-	for(Piece p : internboard.getBoard()) {
-	    i++;
-	    if(p!=null) System.out.print(" "+p.getShort()+" ");
-	    else System.out.print(" n ");
-	    if(i%internboard.getWidth()==0) System.out.println();
+	char shorthand = ' ';
+	for(int n = internboard.getHeight()-1; n>=0; n--) {
+	    for(int i = 0; i<=internboard.getWidth()-1;i++) {
+		Piece p = internboard.getPiece(i+n*8);
+		if(p==null) {
+		    shorthand = 'n';
+		} else {
+		    shorthand = p.getShort();
+		    if(p.getFealty()) shorthand = Character.toUpperCase(shorthand);
+		}
+		System.out.print(" "+shorthand+" ");
+	    }
+	    System.out.println();
 	}
-    } */
-    
+    } //*/
+
     private boolean check(boolean white) {
-	for(Piece p : internboard.getPieces()) {
+	return check(white, internboard);
+    }
+
+    private boolean check(boolean white, LinBoard board) {
+	for(Piece p : board.getPieces()) {
 	    if(!white==p.getFealty()) {
 		int k;
 		if(white) k = whiteKing.getLoc();
 		else k=blackKing.getLoc();
-		for(int m : p.getMoves(internboard)) {
+		for(int m : p.getMoves(board)) {
 		    if(m==k) return true;
 		}
 	    }
 	}
 	return false;
     }
-    private boolean trap() {
-	if(whiteKing.getMoves(internboard).length==0)return true;
-	if(blackKing.getMoves(internboard).length==0)return true;
+    private boolean trap(boolean whiteTurn) {
+	LinBoard bufferboard = internboard.copy();
+	King king;
+	int oppKing;
+	if(whiteTurn) {
+	    king = whiteKing;
+	    oppKing = blackKing.getLoc();
+	}else {
+	    king = blackKing;
+	    oppKing = whiteKing.getLoc();
+	}
+	ArrayList<Integer> moves = new ArrayList<Integer>(Arrays.asList(king.getMoves(internboard)));
+	for(Piece p : internboard.getPieces(!whiteTurn)) {
+	    moves.removeAll(Arrays.asList(p.getMoves(internboard)));
+	}
+	for(Integer m : moves) {
+	    if(oppKing==m) {
+		if(moves.size()==1) return true;
+	    }
+	    mv(m, king.getLoc(), bufferboard);
+	    if(check(whiteTurn)) return true;
+	}
+	if(moves.size()==0) return true;
 	return false;
     }
-
 }

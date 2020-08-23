@@ -35,10 +35,10 @@ public class Queen extends Piece {
 	int increment = -1;
 	if(forward) increment = 1;
 	for(int i = increment; board.inBounds(board.locToVec(this.location), diag(i, polarity));i+=increment) {
-	    Piece p = board.getPiece(this.location+diagMov(i, board, polarity));
-	    if(p==null) moves.add(diagMov(i, board, polarity));
+	    Piece p = board.getPiece(location+diagMov(i, board, polarity));
+	    if(p==null) moves.add(location+diagMov(i, board, polarity));
 	    else if(p.getFealty()!=isFirst) {
-		moves.add(diagMov(i, board, polarity));
+		moves.add(location+diagMov(i, board, polarity));
 		break;
 	    }else {
 		break;

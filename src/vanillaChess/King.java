@@ -1,9 +1,6 @@
 package vanillaChess;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import baseChess.LinBoard;
 import baseChess.Piece;
 
@@ -22,22 +19,7 @@ public class King extends Piece {
 		if(board.checkFealty(board.vecToInteger(move)+location, isFirst))  results.add(board.vecToInteger(move)+location);
 	    }
 	}
-	
-	ArrayList<Piece> stuff = new ArrayList<Piece>();
-	for(Piece p: board.getPieces()) {
-	    if(!(p instanceof King)&&p.getFealty()!=this.isFirst)stuff.add(p);
-	}
-	for(Piece p: stuff) {
-	    List<Integer> m = Arrays.asList(p.getMoves(board));
-	    results.removeAll(m);
-	}
-	ArrayList<Integer> cleaned = new ArrayList<Integer>();
-	for(Integer m: results) {
-	    m -=location;
-	    cleaned.add(m);
-	}
-	
-	return cleaned.toArray(new Integer[cleaned.size()]);
+	return results.toArray(new Integer[results.size()]);
     }
     
     public Integer[] getMoves(LinBoard board) {

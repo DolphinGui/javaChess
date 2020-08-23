@@ -27,36 +27,47 @@ public class Pawn extends Piece {
     }
 
     public Integer[] exception(LinBoard board){
-	return ArrayMan.concatAll(capture(board), initiative(board), advance(board)) ;
+	return ArrayMan.concatAll(capture(board), initiative(board), advance(board)); 
     }
 
     private Integer[] advance(LinBoard board) {
 	Integer[] direction = {0,1};
-	if(board.getPiece(direction) == null) {
-	    Integer[] results = {board.vecToInteger(direction)};
+	if(!isFirst) direction[1] = -1; 
+	if(board.getPiece(direction, board.locToVec(location)) == null) {
+	    Integer[] results = {location+board.vecToInteger(direction)};
 	    return results;
 	}
-	return null;
+	Integer[] results = {};
+	return results;
     }
 
     private Integer[] initiative(LinBoard board) {
 	if (!hasMoved) {
-	    Integer[] init = {board.getWidth()*2};
+	    Integer[] init = {0};
+	    if(isFirst) 
+		init[0] = location+board.getWidth()*2;
+	    else 
+		init[0] = location-board.getWidth()*2;
 	    return init;
 	}
 	return null;
     }
 
     private Integer[] capture(LinBoard board) {
-	Integer[] NW = {-1,1};
-	Integer[] NE = {1,1};
+	Integer[] west = {-1,1};
+	Integer[] east = {1,1};
+	if(!isFirst) {
+	    west[1] = -1;
+	    east[1] = -1;
+	}
 	
 	ArrayList<Integer> validX = new ArrayList<Integer>();
-	if (!board.checkFealty(this.getLoc()+board.vecToInteger(NW), this.isFirst)){
-	    validX.add(board.vecToInteger(NW));
+	if (board.checkFealty(this.getLoc()+board.vecToInteger(west), isFirst)&&board.getPiece(this.getLoc()+board.vecToInteger(west))!=null){
+	    validX.add(board.vecToInteger(west)+location);
 	}
-	if (!board.checkFealty(this.getLoc()+board.vecToInteger(NE), this.isFirst)){
-	    validX.add(board.vecToInteger(NE));
+	if (board.checkFealty(this.getLoc()+board.vecToInteger(east), isFirst)&&board.getPiece(this.getLoc()+board.vecToInteger(west))!=null){
+	    validX.add(board.vecToInteger(east)+location);
+
 	}
 	return validX.toArray(new Integer[validX.size()]);
     }
