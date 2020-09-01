@@ -31,18 +31,34 @@ public class Game {
 	for(int i=0; i<internboard.getLength();i++) {
 	    boolean white = Character.isUpperCase(boardDefault.get(i)); //uppercases are white
 	    char c = Character.toLowerCase(boardDefault.get(i));
-	    if(c=='r') internboard.set(i, new Rook(i, white));
-	    else if(c=='b') internboard.set(i, new Bishop(i, white));
-	    else if(c=='k') internboard.set(i, new Knight(i, white));
-	    else if(c=='x') internboard.set(i, new Queen(i, white));
-	    else if(c=='p') internboard.set(i, new Pawn(i, white));
-	    else if(c=='y') {
+	    switch (c) {
+	    case 'r': 
+		internboard.set(i, new Rook(i, white));
+		break;
+	    case 'b': 
+		internboard.set(i, new Bishop(i, white));
+		break;
+	    case 'k': 
+		internboard.set(i, new Knight(i, white));
+		break;
+	    case 'x': 
+		internboard.set(i, new Queen(i, white));
+		break;
+	    case 'p': 
+		internboard.set(i, new Pawn(i, white));
+		break;
+	    case 'y': 
 		internboard.set(i, new King(i, white));
 		if(white) whiteKing= (King) internboard.getPiece(i);
 		else blackKing = (King) internboard.getPiece(i);
+		break;
 	    }
 	}
 	whiteTurn = true;
+    }
+
+    public char[][] getCharBoard() {
+	return internboard.getCharBoard();
     }
 
     public int turn(int loc, int origin) {
@@ -53,7 +69,7 @@ public class Game {
 	else return move(loc, origin);
     }
 
-    public int move(int loc, int origin) {
+    private int move(int loc, int origin) {
 	//0 is successful, 1 is failed, 2 is check
 	LinBoard bufferboard = internboard.copy();
 	Piece p = internboard.getPiece(origin);

@@ -1,0 +1,5 @@
+Welcome to Java Chess!
+
+L for local game, N for networked game,
+
+and B for a bot game
