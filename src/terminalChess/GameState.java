@@ -79,10 +79,15 @@ public class GameState {
 	tGraphics.putString(40, 15, move);
     }
 
+    private static void initTime(Screen screen, TextGraphics tGraphics) throws IOException {
+	tGraphics.putString(43, 4,"00:00");
+    }
+    
     private static void drawTime(Screen screen, TextGraphics tGraphics, int seconds) throws IOException {
-	String time = "00:00";
-	time = Integer.toString(Math.floorDiv(seconds, 60)) + ":" + Integer.toString(seconds % 60);
-	tGraphics.putString(40, 4, time);
+	tGraphics.putString(47, 4, Integer.toString(seconds%10));
+	tGraphics.putString(46, 4, Integer.toString((seconds/10)%6));
+	tGraphics.putString(44, 4, Integer.toString((seconds/60)%10));
+	tGraphics.putString(43, 4, Integer.toString((seconds/60)/10));
     }
 
     private static TextCharacter pieceFactory(char item, boolean pieceWhite, boolean tileWhite) {
@@ -105,7 +110,7 @@ public class GameState {
 	screen.clear();
 	String[][] moves = { { "nana", "20:30" }, { "nana", "20:30" }, { "nana", "20:30" }, { "nana", "20:30" } };
 	drawBoard(screen, tGraphics, board);
-	drawTime(screen, tGraphics, 0);
+	initTime(screen, tGraphics);
 	drawHistory(screen, tGraphics, moves);
 	screen.refresh();
     }
