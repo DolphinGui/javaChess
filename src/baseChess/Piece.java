@@ -18,12 +18,12 @@ public class Piece{
 	    shorthand = shot;
 	}
 	
-	public char getShort() {
-	    return shorthand;
+	public Integer[] exception(LinBoard a) {
+		return null;
 	}
 	
-	public String getName() {
-	    return name;
+	public int getCol() {
+		return location%8;
 	}
 	
 	public boolean getFealty() {
@@ -35,33 +35,33 @@ public class Piece{
 	}
 	
 	
-	public int getCol() {
-		return location%8;
+	public Integer[] getMoves(LinBoard board) {
+	    return ArrayMan.concatAll(validator(board), exception(board));
 	}
 	
+	public String getName() {
+	    return name;
+	}
+
 	public int getRow() {
 		return Math.floorDiv(location, 8);
 	}
-
+	public char getShort() {
+	    return shorthand;
+	}
+	
+	public boolean isKing() {
+	    return false;
+	}
+	
 	public void setLoc(int loc) {
 		location = loc;
 	}
-	public Integer[] exception(LinBoard a) {
-		return null;
-	}
-	
 	private Integer[] validator(LinBoard board) {
 	    ArrayList<Integer> results = new ArrayList<Integer>();
 	    for(Integer[] move: moves) {
 		if(board.checkFealty(board.vecToInteger(move), isFirst))  results.add(board.vecToInteger(move));
 	    }
 	    return results.toArray(new Integer[results.size()]);
-	}
-	
-	public Integer[] getMoves(LinBoard board) {
-	    return ArrayMan.concatAll(validator(board), exception(board));
-	}
-	public boolean isKing() {
-	    return false;
 	}
 }

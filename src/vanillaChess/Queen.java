@@ -12,23 +12,6 @@ public class Queen extends Piece {
 	super(loc, fealty, "Queen", 'x');
     }
 
-    private Integer[] diag(int i, boolean opposite) {
-	Integer[] result = new Integer[2];
-	if(!opposite) {
-	    result[0]=i;
-	    result[1]=i;
-	}
-	else {
-	    result[0]=i;
-	    result[1]=-i;
-	}
-	
-	return result;
-    }
-    private int diagMov(int i, LinBoard board, boolean opp) {
-	return board.vecToInteger(diag(i,opp));
-    }
-    
     private Integer[] bishop(LinBoard board, boolean forward, boolean polarity) {
 	ArrayList<Integer> moves = new ArrayList<Integer>();
 
@@ -47,6 +30,27 @@ public class Queen extends Piece {
 
 	}
 	return moves.toArray(new Integer[moves.size()]);
+    }
+    private Integer[] diag(int i, boolean opposite) {
+	Integer[] result = new Integer[2];
+	if(!opposite) {
+	    result[0]=i;
+	    result[1]=i;
+	}
+	else {
+	    result[0]=i;
+	    result[1]=-i;
+	}
+	
+	return result;
+    }
+    
+    private int diagMov(int i, LinBoard board, boolean opp) {
+	return board.vecToInteger(diag(i,opp));
+    }
+    
+    public Integer[] exception(LinBoard board){
+	return ArrayMan.concatAll(rook(board, true, true), rook(board, true, false),rook(board, false, true),rook(board, false, false),bishop(board, false, true),bishop(board, true, true),bishop(board, false, false),bishop(board, true, false));
     }
     
     private Integer[] rook(LinBoard board, boolean right, boolean rank) {
@@ -80,10 +84,6 @@ public class Queen extends Piece {
 	    }
 	}
 	return moves.toArray(new Integer[moves.size()]);
-    }
-    
-    public Integer[] exception(LinBoard board){
-	return ArrayMan.concatAll(rook(board, true, true), rook(board, true, false),rook(board, false, true),rook(board, false, false),bishop(board, false, true),bishop(board, true, true),bishop(board, false, false),bishop(board, true, false));
     }
     
 }

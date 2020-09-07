@@ -7,27 +7,31 @@ import baseChess.Piece;
 import miscFunct.ArrayMan;
 
 public class Rook extends Piece {
-    public Rook(int loc, boolean fealty) {
-	super(loc, fealty, "Rook", 'r');
-    }
-
     public static final Integer[] move = {};
+
     private final static String name = "Rook";
     private final static char shorthand = 'r';
-
-    public char getShort() {
-	return shorthand;
-    }
-
-    public String getName() {
-	return name;
+    public Rook(int loc, boolean fealty) {
+	super(loc, fealty, "Rook", 'r');
     }
 
     private boolean comp(int n, int m, boolean greater) {
 	if(greater) return (n>m);
 	else return (n<m);
     }
+
+    public Integer[] exception(LinBoard board){
+	return ArrayMan.concatAll(move(board, false, true),move(board, true, true),move(board, false, false),move(board, true, false));
+    }
+
+    public String getName() {
+	return name;
+    }
     
+    public char getShort() {
+	return shorthand;
+    }
+
     private Integer[] move(LinBoard board, boolean right, boolean rank) {
 	ArrayList<Integer> moves = new ArrayList<Integer>();
 	int endpoint;
@@ -59,10 +63,6 @@ public class Rook extends Piece {
 	    }
 	}
 	return moves.toArray(new Integer[moves.size()]);
-    }
-
-    public Integer[] exception(LinBoard board){
-	return ArrayMan.concatAll(move(board, false, true),move(board, true, true),move(board, false, false),move(board, true, false));
     }
 
 }

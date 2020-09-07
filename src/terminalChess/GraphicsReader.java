@@ -9,6 +9,15 @@ import java.util.Scanner;
 
 public class GraphicsReader {
     
+    private static String[] load(File f) throws FileNotFoundException {
+	Scanner layer = new Scanner(f);
+	ArrayList<String> result = new ArrayList<String>();
+	while(layer.hasNextLine()) {
+	    result.add(layer.nextLine());
+	}
+	layer.close();
+	return result.toArray(new String[result.size()]);
+    }
     /* This reads layer files and loads them into an array of string arrays. */
     public static String[][] readfiles(String dir) throws FileNotFoundException {
 	File l = new File(dir);
@@ -28,14 +37,5 @@ public class GraphicsReader {
 	    results.add(load(f));
 	}
 	return results.toArray(new String[results.size()][]);
-    }
-    private static String[] load(File f) throws FileNotFoundException {
-	Scanner layer = new Scanner(f);
-	ArrayList<String> result = new ArrayList<String>();
-	while(layer.hasNextLine()) {
-	    result.add(layer.nextLine());
-	}
-	layer.close();
-	return result.toArray(new String[result.size()]);
     }
 }

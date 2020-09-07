@@ -19,14 +19,6 @@ public class Game {
     private King blackKing;
     private boolean whiteTurn;
 
-    public void init() throws IOException {
-	config = new File("./assets/board.brd");
-	boardDefault = FileRead.readFile(config, StandardCharsets.UTF_8);
-	internboard = new LinBoard(8,8);
-	this.boardSet();
-    }
-
-
     private void boardSet() {
 	for(int i=0; i<internboard.getLength();i++) {
 	    boolean white = Character.isUpperCase(boardDefault.get(i)); //uppercases are white
@@ -57,16 +49,46 @@ public class Game {
 	whiteTurn = true;
     }
 
+
+    private boolean check(boolean white) {
+	return check(white, internboard);
+    }
+
+    private boolean check(boolean white, LinBoard board) {
+	for(Piece p : board.getPieces()) {
+	    if(!white==p.getFealty()) {
+		int k;
+		if(white) k = whiteKing.getLoc();
+		else k=blackKing.getLoc();
+		for(int m : p.getMoves(board)) {
+		    if(m==k) return true;
+		}
+	    }
+	}
+	return false;
+    }
+
+    public boolean checkmate() {
+	if(trap(whiteTurn)&&check(whiteTurn)) return true;
+	return false;
+    }
     public char[][] getCharBoard() {
 	return internboard.getCharBoard();
     }
+    
+    public int getHeight() {
+	return internboard.getHeight();
+    }
 
-    public int turn(int loc, int origin) {
-	//0 is successful, 1 is failed, 2 is check, and 3 is checkmate
-	boolean mate = check(whiteTurn);
-	if(mate && trap(whiteTurn)) return 3;
-	else if(mate)return 2;
-	else return move(loc, origin);
+    public int getWidth() {
+	return internboard.getWidth();
+    }
+
+    public void init() throws IOException {
+	config = new File("./assets/board.brd");
+	boardDefault = FileRead.readFile(config, StandardCharsets.UTF_8);
+	internboard = new LinBoard(8,8);
+	this.boardSet();
     }
 
     private int move(int loc, int origin) {
@@ -86,17 +108,12 @@ public class Game {
 	}
 	return 1;
     }
-
     private void mv(int loc, int origin, LinBoard board) {
 	board.set(loc, board.getPiece(origin));
 	board.set(origin, null);
 	board.getPiece(loc).setLoc(loc);
     }
 
-    public boolean checkmate() {
-	if(trap(whiteTurn)&&check(whiteTurn)) return true;
-	return false;
-    }
     ///*
     @SuppressWarnings("unused")
     private void printInternboard() { //this is a debug function. comment out later.
@@ -116,23 +133,6 @@ public class Game {
 	}
     } //*/
 
-    private boolean check(boolean white) {
-	return check(white, internboard);
-    }
-
-    private boolean check(boolean white, LinBoard board) {
-	for(Piece p : board.getPieces()) {
-	    if(!white==p.getFealty()) {
-		int k;
-		if(white) k = whiteKing.getLoc();
-		else k=blackKing.getLoc();
-		for(int m : p.getMoves(board)) {
-		    if(m==k) return true;
-		}
-	    }
-	}
-	return false;
-    }
     private boolean trap(boolean whiteTurn) {
 	LinBoard bufferboard = internboard.copy();
 	King king;
@@ -157,5 +157,12 @@ public class Game {
 	}
 	if(moves.size()==0) return true;
 	return false;
+    }
+    public int turn(int loc, int origin) {
+	//0 is successful, 1 is failed, 2 is check, and 3 is checkmate
+	boolean mate = check(whiteTurn);
+	if(mate && trap(whiteTurn)) return 3;
+	else if(mate)return 2;
+	else return move(loc, origin);
     }
 }

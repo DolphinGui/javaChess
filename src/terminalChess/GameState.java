@@ -1,6 +1,7 @@
 package terminalChess;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
@@ -11,18 +12,29 @@ import com.googlecode.lanterna.screen.Screen;
 
 public class GameState {
 
-    static TextColor tilecolor = TextColor.ANSI.YELLOW_BRIGHT;
-    static TextColor piececolor = TextColor.ANSI.WHITE;
-    static HashMap<TextColor, TextColor> swapMap = new HashMap<TextColor, TextColor>();
-
-    static {
+    TextColor tilecolor;
+    TextColor piececolor;
+    HashMap<TextColor, TextColor> swapMap = new HashMap<TextColor, TextColor>();
+    
+    GameState(){
 	swapMap.put(TextColor.ANSI.YELLOW, TextColor.ANSI.YELLOW_BRIGHT);
 	swapMap.put(TextColor.ANSI.YELLOW_BRIGHT, TextColor.ANSI.YELLOW);
 	swapMap.put(TextColor.ANSI.BLACK, TextColor.ANSI.WHITE);
 	swapMap.put(TextColor.ANSI.WHITE, TextColor.ANSI.BLACK);
+	tilecolor = TextColor.ANSI.YELLOW_BRIGHT;
+	piececolor = TextColor.ANSI.WHITE;
+    }
+    
+    GameState(TextColor[] colors){
+	swapMap.put(colors[0], colors[1]); //the array is white tile, black tile, white piece, and black piece in this order.
+	swapMap.put(colors[1], colors[0]);
+	swapMap.put(colors[2], colors[3]);
+	swapMap.put(colors[3], colors[2]);
+	tilecolor = colors[1];
+	piececolor = colors[3];
     }
 
-    private static BasicTextImage boardSet(char[][] board) throws IOException {
+    private BasicTextImage boardSet(char[][] board) throws IOException {
 	BasicTextImage result = new BasicTextImage(board.length * 3 + 1, board[0].length + 1);
 	boolean isWhite = false;
 	char[] ab = "abcdefghijklmnopqrstuvwxyz".toCharArray();
@@ -53,44 +65,43 @@ public class GameState {
 	return result;
     }
 
-    private static void drawBoard(Screen screen, TextGraphics tGraphics, char[][] board) throws IOException {
-
+    public void drawBoard(Screen screen, TextGraphics tGraphics, char[][] board) throws IOException {
 	BasicTextImage boardImage = boardSet(board);
-
-	int column = 10;// Math.floorDiv(screen.getTerminalSize().getColumns()-boardImage.getSize().getColumns(),
-			// 2);
-	int row = 3;// Math.floorDiv(screen.getTerminalSize().getRows()-boardImage.getSize().getRows(),
-		    // 2);
-
+	int column = 10;
+	int row = 3;
 	tGraphics.drawImage(new TerminalPosition(column, row), boardImage);
     }
 
-    private static void drawHistory(Screen screen, TextGraphics tGraphics, String[][] moves) {
+    private void drawHistory(Screen screen, TextGraphics tGraphics, String[][] moves) {
 	for (int i = 0; i < 5; i++) {
 	    tGraphics.setCharacter(45, 6 + i, '|');
 	}
-	for (int i = 0; i < moves.length; i++) {
-	    tGraphics.putString(45 - moves[i][0].length(), 6  + i, moves[i][0]);
-	    tGraphics.putString(46, 6 + i, moves[i][1]);
+	if(moves.length!=0) {
+	    for (int i = 0; i < moves.length; i++) {
+		tGraphics.putString(45 - moves[i][0].length(), 6  + i, moves[i][0]);
+		tGraphics.putString(46, 6 + i, moves[i][1]);
+	    }
 	}
     }
 
-    private static void drawMove(Screen screen, TextGraphics tGraphics, String move) {
+    public void drawMove(Screen screen, TextGraphics tGraphics, String move) throws IOException {
 	tGraphics.putString(40, 15, move);
+	screen.refresh();
     }
 
-    private static void initTime(Screen screen, TextGraphics tGraphics) throws IOException {
-	tGraphics.putString(43, 4,"00:00");
-    }
-    
-    private static void drawTime(Screen screen, TextGraphics tGraphics, int seconds) throws IOException {
+    public void drawTime(Screen screen, TextGraphics tGraphics, int seconds) throws IOException {
 	tGraphics.putString(47, 4, Integer.toString(seconds%10));
 	tGraphics.putString(46, 4, Integer.toString((seconds/10)%6));
 	tGraphics.putString(44, 4, Integer.toString((seconds/60)%10));
-	tGraphics.putString(43, 4, Integer.toString((seconds/60)/10));
+	tGraphics.putString(43, 4, Integer.toString((seconds/600)));
+	screen.refresh();
     }
 
-    private static TextCharacter pieceFactory(char item, boolean pieceWhite, boolean tileWhite) {
+    private void initTime(Screen screen, TextGraphics tGraphics) throws IOException {
+	tGraphics.putString(43, 4,"00:00");
+    }
+
+    private TextCharacter pieceFactory(char item, boolean pieceWhite, boolean tileWhite) {
 	TextColor piece;
 	TextColor tile;
 	if (pieceWhite) {
@@ -106,33 +117,20 @@ public class GameState {
 	return new TextCharacter(item, piece, tile);
     }
 
-    public static void startGame(Screen screen, TextGraphics tGraphics, char[][] board) throws IOException {
+    public void startGame(Screen screen, TextGraphics tGraphics, char[][] board) throws IOException {
 	screen.clear();
-	String[][] moves = { { "nana", "20:30" }, { "nana", "20:30" }, { "nana", "20:30" }, { "nana", "20:30" } };
+	String[][] moves = {};
 	drawBoard(screen, tGraphics, board);
 	initTime(screen, tGraphics);
 	drawHistory(screen, tGraphics, moves);
-	screen.refresh();
     }
 
-    public static void update(Screen screen, TextGraphics tGraphics, char[][] board) throws IOException {
-	drawBoard(screen, tGraphics, board);
-	screen.refresh();
+    public void error(Screen screen, TextGraphics tGraphics, String message) {
+	tGraphics.putString(40, 16, message);
     }
-
-    public static void update(Screen screen, TextGraphics tGraphics, int time) throws IOException {
-	drawTime(screen, tGraphics, time);
-	screen.refresh();
-    }
-
-    public static void update(Screen screen, TextGraphics tGraphics, String move) throws IOException {
-	drawMove(screen, tGraphics, move);
-	screen.refresh();
-    }
-
-    public static void update(Screen screen, TextGraphics tGraphics, String[][] moves) throws IOException {
-	drawHistory(screen, tGraphics, moves);
-	screen.refresh();
+    
+    public void drawHistory(Screen screen, TextGraphics tGraphics, ArrayList<String[]> moves) throws IOException {
+	drawHistory(screen, tGraphics, moves.toArray(new String[moves.size()][]));
     }
 
 }

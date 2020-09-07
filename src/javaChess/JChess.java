@@ -7,28 +7,38 @@ import vanillaChess.Game;
 public class JChess {
 	
 	/* TODO:
-	 * UI of some sort, maybe terminal or gui
-	 * central game engine
 	 * stockfish implementation?
 	 * */
-	public static void main(String[] args) throws IOException {///*
+	public static void main(String[] args) throws IOException {
 		Game chess = new Game();
 		ChessTerminal screen = new ChessTerminal();
 		chess.init();
 		screen.initGame(chess.getCharBoard());
+		NotationInterperter denote = new NotationInterperter(chess.getWidth(), chess.getHeight());
 		int result = 0;
 		while(true) {
-		    if(result == 3) {
-			screen.destroy();
+		    if(screen.resized()) {
+			screen.refreshGame(chess.getCharBoard());
+		    }
+		    if(result == 3) { //check if previous loop's result was a checkmate
+			screen.destroy(); //make this a victory screen
 		    	break;
 		    }
-		    String out = screen.listenGame();
-		    int loc = NotationInterperter.denotate(out.substring(2, 4));
-		    int origin = NotationInterperter.denotate(out.substring(0, 2));
-		    result = chess.turn(loc, origin);
-		    screen.boardUpdate(chess.getCharBoard());
+		    String move = screen.listenGame();
+		    int loc = denote.denotate(move.substring(2, 4));
+		    int origin = denote.denotate(move.substring(0, 2));
+		    if(loc==-1||origin==-1) { //-1 means out of bounds, -2 means bad input
+			screen.errorMessage("Out of bounds");
+			continue; 
+		    }
+		    if(loc==-2||origin==-2) { //-1 means out of bounds, -2 means bad input
+			screen.errorMessage("Bad input");
+			continue; 
+		    }
+		    result = chess.turn(loc, origin); //0 is successful, 1 is failed, 2 is check
+		    screen.turn(chess.getCharBoard(), move); 
 		}
-		//*/
+		
 
 	}
 

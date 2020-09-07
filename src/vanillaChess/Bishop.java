@@ -7,17 +7,13 @@ import baseChess.Piece;
 import miscFunct.ArrayMan;
 
 public class Bishop extends Piece {
+    public static final Integer[] move = {};
+
+    private final static String name = "Bishop";
     public Bishop(int loc, boolean fealty) {
 	super(loc, fealty, "bishop", 'b');
     }
 
-    public static final Integer[] move = {};
-    private final static String name = "Bishop";
-
-    public String getName() {
-	return name;
-    }
-    
     private Integer[] diag(int i, boolean opposite) {
 	Integer[] result = new Integer[2];
 	if(!opposite) {
@@ -31,10 +27,18 @@ public class Bishop extends Piece {
 	
 	return result;
     }
+    
     private int diagMov(int i, LinBoard board, boolean opp) {
 	return board.vecToInteger(diag(i,opp));
     }
+    public Integer[] exception(LinBoard board){
+	return ArrayMan.concatAll(move(board, true, true), move(board, true, false),move(board, false, true),move(board, false, false));
+    }
     
+    public String getName() {
+	return name;
+    }
+
     private Integer[] move(LinBoard board, boolean forward, boolean polarity) {
 	ArrayList<Integer> moves = new ArrayList<Integer>();
 
@@ -53,9 +57,5 @@ public class Bishop extends Piece {
 
 	}
 	return moves.toArray(new Integer[moves.size()]);
-    }
-
-    public Integer[] exception(LinBoard board){
-	return ArrayMan.concatAll(move(board, true, true), move(board, true, false),move(board, false, true),move(board, false, false));
     }
 }

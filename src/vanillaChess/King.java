@@ -12,6 +12,10 @@ public class King extends Piece {
 	super(loc, fealty, "King", 'y');
     }
 
+    public Integer[] getMoves(LinBoard board) {
+	return validator(board);
+    }
+    
     private Integer[] validator(LinBoard board) {
 	ArrayList<Integer> results = new ArrayList<Integer>();
 	for(Integer[] move: moves) {
@@ -20,10 +24,6 @@ public class King extends Piece {
 	    }
 	}
 	return results.toArray(new Integer[results.size()]);
-    }
-    
-    public Integer[] getMoves(LinBoard board) {
-	return validator(board);
     }
     
 }

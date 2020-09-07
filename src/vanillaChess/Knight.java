@@ -14,6 +14,10 @@ public class Knight extends Piece {
 	super(loc, fealty, "Knight", 'k');
     }
 
+    public Integer[] getMoves(LinBoard board) {
+	return validator(board);
+    }
+    
     private Integer[] validator(LinBoard board) {
 	ArrayList<Integer> results = new ArrayList<Integer>();
 	for(Integer[] move: moves) {
@@ -22,10 +26,6 @@ public class Knight extends Piece {
 	    }
 	}
 	return results.toArray(new Integer[results.size()]);
-    }
-    
-    public Integer[] getMoves(LinBoard board) {
-	return validator(board);
     }
     
 }
