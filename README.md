@@ -13,8 +13,10 @@ The first character determines the color mode.   All examples shown denote the d
 *5*: piece black color
 *6*: text color
 *7*: background color
-*8*: highlight white color  
-*9*: highlight black color  
+*8*: highlight white tile color  
+*9*: highlight black tile color  
+*10*: highlight black piece color  
+*11*: highlight black piece color  
 Characters are also seperated by space.
 
 ### Configuring ANSI
@@ -29,7 +31,7 @@ Characters are also seperated by space.
 *l*: black  
 Capital letters denote the bright version of the color.  
 **Example**:  
-> 0 y Y l w y L
+> 0 y Y l w W d 
 
 ### Configuring RGB
 All characters are replaced with 9 digit numbers, 
@@ -39,4 +41,4 @@ and the last 3 denoting blue.
 **All numbers must be 9 digits long, no exceptions**
 Default is still *d*.  
 **Example**:  
-> 1 d d 25525585 000000000 128128000 128128128  
+> 1 170085000 255255085 000000000 170170170 255255255 d  

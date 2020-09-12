@@ -82,11 +82,16 @@ public class ChessTerminal{
 	for(Character c : text) {
 	    if(c==' ') { 
 		if(i>0&&!isAnsi) {
-		    int red = Integer.valueOf(buffer.substring(0, 3));
-		    int green = Integer.valueOf(buffer.substring(3, 6));
-		    int blue = Integer.valueOf(buffer.substring(6, 9));
-		    settings[i-1] = new TextColor.RGB(red, green, blue);
-		    buffer = "";
+		    if(buffer.charAt(0)=='d') {
+			settings[i-1] = TextColor.ANSI.DEFAULT;
+			buffer = "";
+		    }else {
+			int red = Integer.valueOf(buffer.substring(0, 3));
+			int green = Integer.valueOf(buffer.substring(3, 6));
+			int blue = Integer.valueOf(buffer.substring(6, 9));
+			settings[i-1] = new TextColor.RGB(red, green, blue);
+			buffer = "";
+		    }
 		}
 		i++;
 	    }
@@ -153,7 +158,7 @@ public class ChessTerminal{
 	exists = true;
 	history = new ArrayList<String[]>();
 	resizeListener.isTerminalResized();
-	game = configure(new File("cfg.ini"));
+	game = configure(new File("colors.cfg"));
     }
 
     public void close() throws IOException {
