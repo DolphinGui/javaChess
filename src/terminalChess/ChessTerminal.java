@@ -189,7 +189,17 @@ public class ChessTerminal{
     public char initStart() throws IOException {
 	DisplayLayers.start(screen, tGraphics, GraphicsReader.readfiles("assets/start"));
 	screen.refresh();
-	return screen.readInput().getCharacter();
+	
+	KeyStroke input = null;
+	
+	while(input==null) {
+	    input = screen.readInput();
+	}
+	
+	if(input.getCharacter()==null) {
+	    System.exit(0);
+	}
+	return input.getCharacter();
     }
 
     public String listenGame() throws IOException {

@@ -45,7 +45,7 @@ public class JChess {
 	    }
 	    break;
 	}	
-
+	screen.close();
     }
 
 }
