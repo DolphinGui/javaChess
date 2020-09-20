@@ -215,7 +215,7 @@ public class ChessTerminal {
 			move = move.concat(Character.toString(input.getCharacter()));
 			game.drawMove(screen, tGraphics, display.concat(move));
 		}
-		move = move.substring(0, move.length() - 1);
+		move = move.substring(0, 4);
 		return move;
 	}
 

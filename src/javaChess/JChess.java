@@ -19,7 +19,7 @@ public class JChess {
 
 			char choice = screen.initStart();
 
-			switch (choice) {
+			switch (Character.toLowerCase(choice)) {
 			case 'l':
 				gameloop(chess, screen);
 				break;
@@ -43,7 +43,7 @@ public class JChess {
 				break;
 			}
 			String move = screen.listenGame();
-			screen.errorMessage("");
+			screen.errorMessage("                   ");
 			int loc = denote.denotate(move.substring(2, 4));
 			int origin = denote.denotate(move.substring(0, 2));
 			if (loc == -1 || origin == -1) { // -1 means out of bounds, -2 means bad input
