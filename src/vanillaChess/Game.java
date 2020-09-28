@@ -121,7 +121,7 @@ public class Game {
 		board.getPiece(loc).setLoc(loc);
 	}
 
-	/// *
+	/*
 	@SuppressWarnings("unused")
 	private void printInternboard() { // this is a debug function. comment out later.
 		char shorthand = ' ';
@@ -139,7 +139,7 @@ public class Game {
 			}
 			System.out.println();
 		}
-	} // */
+	}  */
 
 	private boolean trap(boolean whiteTurn) {
 		LinBoard bufferboard = internboard.copy();

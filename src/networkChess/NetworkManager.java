@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.BitSet;
 
 public class NetworkManager {
     private class SocketManager {
@@ -40,27 +39,13 @@ public class NetworkManager {
 
 	}
 
-	public void send(byte[] message) {
-	    try {
-		output.write(message);
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    }
-	}
 	public void send(String message) {
 	    try {
 		output.write(message.getBytes());
+		output.flush();
 	    } catch (IOException e) {
 		e.printStackTrace();
 	    }
-	}
-	public byte[] read() {
-	    try {
-		return input.readAllBytes();
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    }
-	    return null;
 	}
 	public String readAsString() {
 	    try {
