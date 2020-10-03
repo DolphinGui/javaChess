@@ -9,8 +9,17 @@ public class Piece {
 	protected String name;
 	protected char shorthand;
 	protected boolean isFirst = true;
+	protected boolean hasMoved = false;
 	Integer[][] moves = {};
 
+	public void moved() {
+		hasMoved = true;
+	}
+	
+	public boolean hasMoved() {
+		return hasMoved;
+	}
+	
 	public Piece(int loc, boolean fealty, String nam, char shot) {
 		location = loc;
 		isFirst = fealty;

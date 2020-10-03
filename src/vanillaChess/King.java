@@ -15,6 +15,10 @@ public class King extends Piece {
 		return validator(board);
 	}
 
+	public boolean isKing() {
+		return true;
+	}
+	
 	private Integer[] validator(LinBoard board) {
 		ArrayList<Integer> results = new ArrayList<Integer>();
 		for (Integer[] move : moves) {

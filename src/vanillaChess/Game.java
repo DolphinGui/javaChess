@@ -54,21 +54,24 @@ public class Game {
 		return check(white, internboard);
 	}
 
-	private boolean check(boolean white, LinBoard board) {
-		for (Piece p : board.getPieces()) {
-			if (!white == p.getFealty()) {
-				int k;
-				if (white)
-					k = whiteKing.getLoc();
-				else
-					k = blackKing.getLoc();
-				for (int m : p.getMoves(board)) {
-					if (m == k)
-						return true;
-				}
+	private boolean check(boolean white, int loc, LinBoard board) {
+		for (Piece p : board.getPieces(!white)) {
+			for (int m : p.getMoves(board)) {
+				if (m == loc)
+					return true;
 			}
 		}
 		return false;
+	}
+
+	private boolean check(boolean white, LinBoard board) {
+		int k;
+		if (white)
+			k = whiteKing.getLoc();
+		else
+			k = blackKing.getLoc();
+		return check(white, k, board);
+
 	}
 
 	public boolean checkmate() {
@@ -96,26 +99,72 @@ public class Game {
 		this.boardSet();
 	}
 
+	private int castle(int k, int r, LinBoard board) {
+		Piece king = board.getPiece(k);
+		Piece rook = board.getPiece(r);
+
+		if(king.hasMoved()||rook.hasMoved()) {
+			return 1;
+		}
+		int interval = 0;
+		if(king.getCol()==rook.getCol()) {
+			if(king.getRow()>rook.getRow()) {
+				interval = 8;
+			}else if(king.getRow()<rook.getRow()) {
+				interval = -8;
+			}
+		}else if(king.getRow()==rook.getRow()) {
+			if(king.getCol()>rook.getCol()) {
+				interval = 1;
+			}else if(king.getCol()<rook.getCol()) {
+				interval = -1;
+			}
+		}
+		if(interval == 0) {
+			return 1;
+		}
+		for(int i = k + interval; i!=r; i+=interval) {
+			if(board.getPiece(i)!=null) 
+				return 1;
+			if(check(king.getFealty(), i, board))
+				return 1;
+		}
+		set(k + 2 * interval, k, board);
+		if (check(whiteTurn, board))
+			return 2;// validates no checkmate
+		whiteTurn = !whiteTurn;
+		king.moved();
+		rook.moved();
+		return 0;
+	}
+
+
 	private int move(int loc, int origin) {
 		// 0 is successful, 1 is failed, 2 is check
 		LinBoard bufferboard = internboard.copy();
 		Piece p = internboard.getPiece(origin);
 		if (internboard.checkFealty(origin, whiteTurn))
-			return 1; // checks if it's the piece's turn
+			return 1; // checks if piece is capturable
+		
+		if(p instanceof King&&internboard.getPiece(loc)instanceof Rook){
+			return castle(origin, loc, bufferboard);
+		}else {
 		for (Integer m : p.getMoves(internboard)) {
 			if (m == loc) { // validates that the resulting location is a valid move
-				mv(loc, origin, bufferboard);
+				set(loc, origin, bufferboard);
 				if (check(whiteTurn, bufferboard))
 					return 2;// validates no checkmate
 				internboard.setBoard(bufferboard.getBoard());
 				whiteTurn = !whiteTurn;
+				p.moved();
 				return 0;
 			}
+		}
 		}
 		return 1;
 	}
 
-	private void mv(int loc, int origin, LinBoard board) {
+	private void set(int loc, int origin, LinBoard board) {
 		board.set(loc, board.getPiece(origin));
 		board.set(origin, null);
 		board.getPiece(loc).setLoc(loc);
@@ -161,7 +210,7 @@ public class Game {
 				if (moves.size() == 1)
 					return true;
 			}
-			mv(m, king.getLoc(), bufferboard);
+			set(m, king.getLoc(), bufferboard);
 			if (check(whiteTurn))
 				return true;
 		}
@@ -177,7 +226,8 @@ public class Game {
 			return 3;
 		else if (mate)
 			return 2;
-		else
+		else {
 			return move(loc, origin);
+		}
 	}
 }
