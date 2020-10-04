@@ -2,8 +2,6 @@ package vanillaChess;
 
 import java.util.ArrayList;
 
-import baseChess.LinBoard;
-import baseChess.Piece;
 import miscFunct.ArrayMan;
 
 public class Queen extends Piece {

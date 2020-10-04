@@ -2,9 +2,6 @@ package vanillaChess;
 
 import java.util.ArrayList;
 
-import baseChess.LinBoard;
-import baseChess.Piece;
-
 public class Knight extends Piece {
 
 	Integer[][] moves = { { -1, -2 }, { -2, -1 }, { -2, 1 }, { -1, 2 }, { 1, -2 }, { 2, -1 }, { 2, 1 }, { 1, 2 } };

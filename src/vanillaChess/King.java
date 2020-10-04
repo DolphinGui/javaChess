@@ -1,8 +1,6 @@
 package vanillaChess;
 
 import java.util.ArrayList;
-import baseChess.LinBoard;
-import baseChess.Piece;
 
 public class King extends Piece {
 	Integer[][] moves = { { 1, 1 }, { 1, 0 }, { 1, -1 }, { 0, 1 }, { 0, -1 }, { -1, 1 }, { -1, 0 }, { -1, -1 } };

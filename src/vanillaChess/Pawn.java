@@ -4,16 +4,16 @@ import miscFunct.ArrayMan;
 
 import java.util.ArrayList;
 
-import baseChess.LinBoard;
-import baseChess.Piece;
-
 public class Pawn extends Piece {
 	private final static String name = "Pawn";
 	private final static char shorthand = 'p';
 	private boolean hasMoved = false;
+	private boolean passant = false;
+	private int initialLoc;
 
 	public Pawn(int loc, boolean fealty) {
 		super(loc, fealty, "Pawn", 'p');
+		initialLoc = loc;
 	}
 
 	private Integer[] advance(LinBoard board) {
@@ -73,8 +73,16 @@ public class Pawn extends Piece {
 		return null;
 	}
 
+	public boolean passant() {
+		return passant;
+	}
+	
 	public void setLoc(int loc) {
+		if(location == initialLoc) {
+			passant = true;
+		}
 		location = loc;
 		hasMoved = false;
+		passant = false;
 	}
 }

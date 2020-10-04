@@ -1,4 +1,4 @@
-package baseChess;
+package vanillaChess;
 
 import java.util.ArrayList;
 
@@ -36,6 +36,14 @@ public class LinBoard {
 		return board;
 	}
 
+	public int toRow(int loc) {
+		return loc/files;
+	}
+	
+	public int toCol(int loc) {
+		return loc%ranks;
+	}
+	
 	public char[][] getCharBoard() {
 		char[][] results = new char[ranks][files];
 		char shorthand;

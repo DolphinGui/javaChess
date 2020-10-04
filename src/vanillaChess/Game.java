@@ -1,7 +1,5 @@
 package vanillaChess;
 
-import baseChess.LinBoard;
-import baseChess.Piece;
 import miscFunct.FileRead;
 
 import java.io.File;
@@ -138,6 +136,43 @@ public class Game {
 		return 0;
 	}
 
+	private int move(int loc, int origin, char c) {
+		LinBoard bufferboard = internboard.copy();
+		Piece p = internboard.getPiece(origin);
+		Piece r;
+		if(p instanceof Pawn&&internboard.toRow(loc)==7||internboard.toRow(loc)==0){
+			switch(c) {
+			case'q':
+				r = new Queen(loc, whiteTurn);
+				break;
+			case'n':
+				r = new Queen(loc, whiteTurn);
+				break;
+			case'r':
+				r = new Queen(loc, whiteTurn);
+				break;
+			case'b':
+				r = new Queen(loc, whiteTurn);
+				break;
+			default:
+				r = new Pawn(loc, whiteTurn);
+				break;
+			}
+			for (Integer m : p.getMoves(internboard)) {
+				if (m == loc) { // validates that the resulting location is a valid move
+					set(loc, origin, bufferboard);
+					bufferboard.getBoard()[loc] = r;
+					if (check(whiteTurn, bufferboard))
+						return 2;// validates no checkmate
+					internboard.setBoard(bufferboard.getBoard());
+					whiteTurn = !whiteTurn;
+					p.moved();
+					return 0;
+				}
+			}
+		}
+		return move(loc, origin);
+	}
 
 	private int move(int loc, int origin) {
 		// 0 is successful, 1 is failed, 2 is check
@@ -145,21 +180,21 @@ public class Game {
 		Piece p = internboard.getPiece(origin);
 		if (internboard.checkFealty(origin, whiteTurn))
 			return 1; // checks if piece is capturable
-		
+
 		if(p instanceof King&&internboard.getPiece(loc)instanceof Rook){
 			return castle(origin, loc, bufferboard);
-		}else {
-		for (Integer m : p.getMoves(internboard)) {
-			if (m == loc) { // validates that the resulting location is a valid move
-				set(loc, origin, bufferboard);
-				if (check(whiteTurn, bufferboard))
-					return 2;// validates no checkmate
-				internboard.setBoard(bufferboard.getBoard());
-				whiteTurn = !whiteTurn;
-				p.moved();
-				return 0;
+		}else{
+			for (Integer m : p.getMoves(internboard)) {
+				if (m == loc) { // validates that the resulting location is a valid move
+					set(loc, origin, bufferboard);
+					if (check(whiteTurn, bufferboard))
+						return 2;// validates no checkmate
+					internboard.setBoard(bufferboard.getBoard());
+					whiteTurn = !whiteTurn;
+					p.moved();
+					return 0;
+				}
 			}
-		}
 		}
 		return 1;
 	}
@@ -219,6 +254,18 @@ public class Game {
 		return false;
 	}
 
+	public int turn(int loc, int origin, char piece) {
+		// 0 is successful, 1 is failed, 2 is check, and 3 is checkmate
+		boolean mate = check(whiteTurn);
+		if (mate && trap(whiteTurn))
+			return 3;
+		else if (mate)
+			return 2;
+		else {
+			return move(loc, origin, piece);
+		}
+	}
+	
 	public int turn(int loc, int origin) {
 		// 0 is successful, 1 is failed, 2 is check, and 3 is checkmate
 		boolean mate = check(whiteTurn);
