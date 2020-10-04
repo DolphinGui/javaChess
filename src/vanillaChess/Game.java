@@ -101,7 +101,7 @@ public class Game {
 		Piece king = board.getPiece(k);
 		Piece rook = board.getPiece(r);
 
-		if(king.hasMoved()||rook.hasMoved()) {
+		if(king.hasMoved()||rook.hasMoved()||(king.getFealty()!=rook.getFealty())) {
 			return 1;
 		}
 		int interval = 0;
@@ -162,18 +162,22 @@ public class Game {
 				if (m == loc) { // validates that the resulting location is a valid move
 					set(loc, origin, bufferboard);
 					bufferboard.getBoard()[loc] = r;
-					if (check(whiteTurn, bufferboard))
-						return 2;// validates no checkmate
-					internboard.setBoard(bufferboard.getBoard());
-					whiteTurn = !whiteTurn;
-					p.moved();
-					return 0;
+					return resolve(bufferboard, p);
 				}
 			}
 		}
 		return move(loc, origin);
 	}
 
+	private int resolve(LinBoard board, Piece p) {
+		if (check(whiteTurn, board))
+			return 2;// validates no checkmate
+		internboard.setBoard(board.getBoard());
+		whiteTurn = !whiteTurn;
+		p.moved();
+		return 0;
+	}
+	
 	private int move(int loc, int origin) {
 		// 0 is successful, 1 is failed, 2 is check
 		LinBoard bufferboard = internboard.copy();
@@ -183,28 +187,51 @@ public class Game {
 
 		if(p instanceof King&&internboard.getPiece(loc)instanceof Rook){
 			return castle(origin, loc, bufferboard);
+		}else if(p instanceof Pawn && internboard.getPiece(loc) instanceof Pawn){
+			int result = enPassant(loc, origin, bufferboard);
+			if(result==0) {
+				return resolve(bufferboard, p);
+			}
 		}else{
 			for (Integer m : p.getMoves(internboard)) {
 				if (m == loc) { // validates that the resulting location is a valid move
 					set(loc, origin, bufferboard);
-					if (check(whiteTurn, bufferboard))
-						return 2;// validates no checkmate
-					internboard.setBoard(bufferboard.getBoard());
-					whiteTurn = !whiteTurn;
-					p.moved();
-					return 0;
+					return resolve(bufferboard, p);
 				}
 			}
 		}
 		return 1;
 	}
 
+	
+	
 	private void set(int loc, int origin, LinBoard board) {
+		if(loc<0||origin<0) {
+			throw new IndexOutOfBoundsException();
+		}
 		board.set(loc, board.getPiece(origin));
 		board.set(origin, null);
 		board.getPiece(loc).setLoc(loc);
 	}
 
+	private int enPassant(int loc, int origin, LinBoard board) {
+		Pawn p;
+		Pawn l;
+		if(board.getPiece(origin) instanceof Pawn && board.getPiece(loc) instanceof Pawn) {
+			p = (Pawn) board.getPiece(origin);
+			l = (Pawn) board.getPiece(loc);
+		}else {
+			return 1;
+		}
+		if(l.passant() && l.getRow()==p.getRow() && 
+				Math.abs(l.getCol()-p.getCol())==1 && board.getPiece(loc)==null) {
+			set(loc, origin - board.getWidth(), board);
+			board.set(loc, null);
+			return 0;
+		}
+		return 1;
+	}
+	
 	/*
 	@SuppressWarnings("unused")
 	private void printInternboard() { // this is a debug function. comment out later.
