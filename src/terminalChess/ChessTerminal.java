@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -203,8 +204,8 @@ public class ChessTerminal {
 		game.drawMove(screen, tGraphics, "moves:       ");
 		while (move.length() < 5) {
 			KeyStroke input = screen.readInput();
-			if (input.getKeyType() == KeyType.Enter) {
-				if (move.length() == 4)
+			if (input.getKeyType() == KeyType.Enter||input.getKeyType()==KeyType.Escape) {
+				if (move.length() == 5)
 					break;
 				else
 					move = "";
@@ -212,7 +213,12 @@ public class ChessTerminal {
 			if (input.getCharacter() == 'c' && input.isCtrlDown()) {
 				System.exit(0);
 			}
-			move = move.concat(Character.toString(input.getCharacter()));
+			if(input.getKeyType()==KeyType.Backspace) {
+				move = move.substring(0, move.length()-1);
+				game.drawMove(screen, tGraphics, "moves:       ");
+			}else {
+				move = move.concat(Character.toString(input.getCharacter()));
+			}
 			game.drawMove(screen, tGraphics, display.concat(move));
 		}
 		move = move.substring(0, move.length() - 1);
@@ -224,6 +230,9 @@ public class ChessTerminal {
 	}
 
 	public void errorMessage(String message) {
+		for(int i = 0; i < screen.getTerminalSize().getColumns(); i++) {
+			screen.setCharacter(i, 16, new TextCharacter(' '));
+		}
 		game.error(screen, tGraphics, message);
 	}
 

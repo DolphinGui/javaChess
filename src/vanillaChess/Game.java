@@ -97,12 +97,12 @@ public class Game {
 		this.boardSet();
 	}
 
-	private int castle(int k, int r, LinBoard board) {
+	private void castle(int k, int r, LinBoard board) throws InvalidMoveException {
 		Piece king = board.getPiece(k);
 		Piece rook = board.getPiece(r);
 
 		if(king.hasMoved()||rook.hasMoved()||(king.getFealty()!=rook.getFealty())) {
-			return 1;
+			throw new InvalidMoveException("Invalid Castle");
 		}
 		int interval = 0;
 		if(king.getCol()==rook.getCol()) {
@@ -119,24 +119,24 @@ public class Game {
 			}
 		}
 		if(interval == 0) {
-			return 1;
+			throw new InvalidMoveException("Invalid Castle");
 		}
 		for(int i = k + interval; i!=r; i+=interval) {
 			if(board.getPiece(i)!=null) 
-				return 1;
+				throw new InvalidMoveException("Invalid Castle");
 			if(check(king.getFealty(), i, board))
-				return 1;
+				throw new InvalidMoveException("Invalid Castle");
 		}
 		set(k + 2 * interval, k, board);
 		if (check(whiteTurn, board))
-			return 2;// validates no checkmate
+			throw new InvalidMoveException("Would Checkmate");// validates no checkmate
 		whiteTurn = !whiteTurn;
 		king.moved();
 		rook.moved();
-		return 0;
+		return;
 	}
 
-	private int move(int loc, int origin, char c) {
+	private void move(int loc, int origin, char c) throws InvalidMoveException {
 		LinBoard bufferboard = internboard.copy();
 		Piece p = internboard.getPiece(origin);
 		Piece r;
@@ -162,45 +162,46 @@ public class Game {
 				if (m == loc) { // validates that the resulting location is a valid move
 					set(loc, origin, bufferboard);
 					bufferboard.getBoard()[loc] = r;
-					return resolve(bufferboard, p);
+					resolve(bufferboard, p);
+					return;
 				}
 			}
 		}
-		return move(loc, origin);
+		move(loc, origin);
 	}
 
-	private int resolve(LinBoard board, Piece p) {
+	private void resolve(LinBoard board, Piece p) throws InvalidMoveException {
 		if (check(whiteTurn, board))
-			return 2;// validates no checkmate
+			throw new InvalidMoveException("Checkmate");
 		internboard.setBoard(board.getBoard());
 		whiteTurn = !whiteTurn;
 		p.moved();
-		return 0;
 	}
 	
-	private int move(int loc, int origin) {
-		// 0 is successful, 1 is failed, 2 is check
+	private void move(int loc, int origin) throws InvalidMoveException {
 		LinBoard bufferboard = internboard.copy();
 		Piece p = internboard.getPiece(origin);
-		if (internboard.checkFealty(origin, whiteTurn))
-			return 1; // checks if piece is capturable
-
+		if (internboard.checkFealty(origin, whiteTurn))// checks if piece is capturable
+			throw new InvalidMoveException("Piece not capturable");
 		if(p instanceof King&&internboard.getPiece(loc)instanceof Rook){
-			return castle(origin, loc, bufferboard);
+			castle(origin, loc, bufferboard);
+			return;
 		}else if(p instanceof Pawn && internboard.getPiece(loc) instanceof Pawn){
 			int result = enPassant(loc, origin, bufferboard);
 			if(result==0) {
-				return resolve(bufferboard, p);
+				resolve(bufferboard, p);
+				return;
 			}
 		}else{
 			for (Integer m : p.getMoves(internboard)) {
 				if (m == loc) { // validates that the resulting location is a valid move
 					set(loc, origin, bufferboard);
-					return resolve(bufferboard, p);
+					resolve(bufferboard, p);
+					return;
 				}
 			}
 		}
-		return 1;
+		throw new InvalidMoveException("Invalid Move");
 	}
 
 	
@@ -281,27 +282,23 @@ public class Game {
 		return false;
 	}
 
-	public int turn(int loc, int origin, char piece) {
-		// 0 is successful, 1 is failed, 2 is check, and 3 is checkmate
+	public boolean turn(int loc, int origin, char piece) throws InvalidMoveException {
 		boolean mate = check(whiteTurn);
 		if (mate && trap(whiteTurn))
-			return 3;
-		else if (mate)
-			return 2;
+			return false;
 		else {
-			return move(loc, origin, piece);
+			move(loc, origin, piece);
+			return !(check(whiteTurn) && trap(whiteTurn));
 		}
 	}
 	
-	public int turn(int loc, int origin) {
-		// 0 is successful, 1 is failed, 2 is check, and 3 is checkmate
+	public boolean turn(int loc, int origin) throws InvalidMoveException {
 		boolean mate = check(whiteTurn);
 		if (mate && trap(whiteTurn))
-			return 3;
-		else if (mate)
-			return 2;
+			return false;
 		else {
-			return move(loc, origin);
+			move(loc, origin);
+			return !(check(whiteTurn) && trap(whiteTurn));
 		}
 	}
 }
