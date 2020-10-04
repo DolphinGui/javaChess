@@ -177,7 +177,7 @@ public class Game {
 		whiteTurn = !whiteTurn;
 		p.moved();
 	}
-	
+
 	private void move(int loc, int origin) throws InvalidMoveException {
 		LinBoard bufferboard = internboard.copy();
 		Piece p = internboard.getPiece(origin);
@@ -186,7 +186,9 @@ public class Game {
 		if(p instanceof King&&internboard.getPiece(loc)instanceof Rook){
 			castle(origin, loc, bufferboard);
 			return;
-		}else if(p instanceof Pawn && internboard.getPiece(loc) instanceof Pawn){
+		}else if(p instanceof Pawn && (internboard.getPiece(loc - internboard.getWidth()) instanceof Pawn||
+				internboard.getPiece(loc + internboard.getWidth()) instanceof Pawn) &&
+				(Math.abs(loc-origin)==7 || Math.abs(loc-origin)==9)){
 			int result = enPassant(loc, origin, bufferboard);
 			if(result==0) {
 				resolve(bufferboard, p);
@@ -204,8 +206,8 @@ public class Game {
 		throw new InvalidMoveException("Invalid Move");
 	}
 
-	
-	
+
+
 	private void set(int loc, int origin, LinBoard board) {
 		if(loc<0||origin<0) {
 			throw new IndexOutOfBoundsException();
@@ -216,23 +218,19 @@ public class Game {
 	}
 
 	private int enPassant(int loc, int origin, LinBoard board) {
-		Pawn p;
-		Pawn l;
-		if(board.getPiece(origin) instanceof Pawn && board.getPiece(loc) instanceof Pawn) {
-			p = (Pawn) board.getPiece(origin);
-			l = (Pawn) board.getPiece(loc);
-		}else {
+		if(board.getPiece(origin) instanceof Pawn && board.getPiece(loc - board.getWidth()) instanceof Pawn) {
+			set(loc, origin, board);
+			board.set(loc - board.getWidth(), null);
+			return 0;
+		}else if(board.getPiece(origin) instanceof Pawn && board.getPiece(loc + board.getWidth()) instanceof Pawn){
+			set(loc, origin, board);
+			board.set(loc + board.getWidth(), null);
+			return 0;
+		}else{
 			return 1;
 		}
-		if(l.passant() && l.getRow()==p.getRow() && 
-				Math.abs(l.getCol()-p.getCol())==1 && board.getPiece(loc)==null) {
-			set(loc, origin - board.getWidth(), board);
-			board.set(loc, null);
-			return 0;
-		}
-		return 1;
 	}
-	
+
 	/*
 	@SuppressWarnings("unused")
 	private void printInternboard() { // this is a debug function. comment out later.
@@ -291,7 +289,7 @@ public class Game {
 			return !(check(whiteTurn) && trap(whiteTurn));
 		}
 	}
-	
+
 	public boolean turn(int loc, int origin) throws InvalidMoveException {
 		boolean mate = check(whiteTurn);
 		if (mate && trap(whiteTurn))
