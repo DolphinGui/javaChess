@@ -189,11 +189,9 @@ public class Game {
 		}else if(p instanceof Pawn && (internboard.getPiece(loc - internboard.getWidth()) instanceof Pawn||
 				internboard.getPiece(loc + internboard.getWidth()) instanceof Pawn) &&
 				(Math.abs(loc-origin)==7 || Math.abs(loc-origin)==9)){
-			int result = enPassant(loc, origin, bufferboard);
-			if(result==0) {
-				resolve(bufferboard, p);
-				return;
-			}
+			enPassant(loc, origin, bufferboard);
+			resolve(bufferboard, p);
+			return;
 		}else{
 			for (Integer m : p.getMoves(internboard)) {
 				if (m == loc) { // validates that the resulting location is a valid move
@@ -217,17 +215,17 @@ public class Game {
 		board.getPiece(loc).setLoc(loc);
 	}
 
-	private int enPassant(int loc, int origin, LinBoard board) {
+	private void enPassant(int loc, int origin, LinBoard board) throws InvalidMoveException {
 		if(board.getPiece(origin) instanceof Pawn && board.getPiece(loc - board.getWidth()) instanceof Pawn) {
 			set(loc, origin, board);
 			board.set(loc - board.getWidth(), null);
-			return 0;
+			return;
 		}else if(board.getPiece(origin) instanceof Pawn && board.getPiece(loc + board.getWidth()) instanceof Pawn){
 			set(loc, origin, board);
 			board.set(loc + board.getWidth(), null);
-			return 0;
+			return;
 		}else{
-			return 1;
+			throw new InvalidMoveException("Invalid Passant");
 		}
 	}
 
