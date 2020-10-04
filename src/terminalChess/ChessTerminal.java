@@ -213,10 +213,10 @@ public class ChessTerminal {
 			if (input.getCharacter() == 'c' && input.isCtrlDown()) {
 				System.exit(0);
 			}
-			if(input.getKeyType()==KeyType.Backspace) {
+			if(input.getKeyType()==KeyType.Backspace && move.length()!=0) {
 				move = move.substring(0, move.length()-1);
 				game.drawMove(screen, tGraphics, "moves:       ");
-			}else {
+			}else if(input.getKeyType()==KeyType.Character){
 				move = move.concat(Character.toString(input.getCharacter()));
 			}
 			game.drawMove(screen, tGraphics, display.concat(move));
