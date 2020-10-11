@@ -2,8 +2,8 @@ package javaChess;
 
 import java.io.IOException;
 
-import terminalChess.ChessTerminal;
-import terminalChess.GameState;
+import terminalChess.Display;
+import terminalChess.ChessDisplay;
 import vanillaChess.Game;
 
 public class JChess {
@@ -13,9 +13,9 @@ public class JChess {
 	 */
 	public static void main(String[] args) {
 		Game chess = new Game();
-		ChessTerminal screen;
+		Display screen;
 		try {
-			screen = new ChessTerminal();
+			screen = new Display();
 			chess.init();
 
 			char choice = screen.initStart();
@@ -31,8 +31,8 @@ public class JChess {
 
 	}
 	
-	private static void gameloop(Game chess, ChessTerminal s) throws IOException {
-		GameState screen = new GameState(s);
+	private static void gameloop(Game chess, Display s) throws IOException {
+		ChessDisplay screen = new ChessDisplay(s);
 		NotationInterperter denote = new NotationInterperter(chess.getWidth(), chess.getHeight());
 		boolean result = true;
 		screen.initGame(chess.getCharBoard());

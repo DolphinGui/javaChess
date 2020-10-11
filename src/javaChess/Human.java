@@ -1,13 +1,13 @@
 package javaChess;
 
-import terminalChess.ChessTerminal;
+import terminalChess.Display;
 import vanillaChess.Game;
 
 public class Human extends Player {
 
-	ChessTerminal screen;
+	Display screen;
 	
-	public Human(boolean white, Game game, boolean turn, int t, ChessTerminal screen) {
+	public Human(boolean white, Game game, boolean turn, int t, Display screen) {
 		super(white, game, turn, t);
 	}
 

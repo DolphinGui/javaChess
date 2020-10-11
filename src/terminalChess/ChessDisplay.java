@@ -16,7 +16,7 @@ import com.googlecode.lanterna.screen.Screen;
 
 import miscFunct.FileRead;
 
-public class GameState {
+public class ChessDisplay {
 
 	private class ChessClock implements Runnable {
 		Thread clock;
@@ -63,9 +63,9 @@ public class GameState {
 	ArrayList<String[]> history;
 	
 	private TerminalPosition boardPosition;
-	private ChessTerminal chess;
+	private Display chess;
 	
-	public GameState(ChessTerminal c) throws IOException {
+	public ChessDisplay(Display c) throws IOException {
 		exists = true;
 		timer = new ChessClock("clock");
 		history = new ArrayList<String[]>();
