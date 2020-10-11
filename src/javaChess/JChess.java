@@ -3,6 +3,7 @@ package javaChess;
 import java.io.IOException;
 
 import terminalChess.ChessTerminal;
+import terminalChess.GameState;
 import vanillaChess.Game;
 
 public class JChess {
@@ -30,10 +31,11 @@ public class JChess {
 
 	}
 	
-	private static void gameloop(Game chess, ChessTerminal screen) throws IOException {
-		screen.initGame(chess.getCharBoard());
+	private static void gameloop(Game chess, ChessTerminal s) throws IOException {
+		GameState screen = new GameState(s);
 		NotationInterperter denote = new NotationInterperter(chess.getWidth(), chess.getHeight());
 		boolean result = true;
+		screen.initGame(chess.getCharBoard());
 		while (true) {
 			if (screen.resized()) {
 				screen.refreshGame(chess.getCharBoard());
