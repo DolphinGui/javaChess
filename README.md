@@ -1,11 +1,17 @@
 # README
+
+## Abnormal exit codes:
+Exit codes by error type:
+0: Normal
+1: File not found, usually the board file
+
 ## Configuring colors
 This program reads the cfg.ini file to configure colors.
 It will read the first 8 characters of the first line.
 The first character determines the color mode.   All examples shown denote the default configuration.
 **0** is ansi, and **1** is RGB mode. Not every terminal will support RGB. If so, use javaw to utilize RGB terminals.
 
-####Characters and what they do
+#### Characters and what they do
 *1*: ANSI mode
 *2*: board white color  
 *3*: board black color  

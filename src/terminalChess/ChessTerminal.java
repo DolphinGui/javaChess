@@ -1,20 +1,14 @@
 package terminalChess;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.*;
 
-import com.googlecode.lanterna.TextCharacter;
-import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.screen.TerminalScreen;
-import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.terminal.SimpleTerminalResizeListener;
-import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.input.*;
+import com.googlecode.lanterna.screen.*;
+import com.googlecode.lanterna.terminal.*;
 
 import miscFunct.FileRead;
 
@@ -70,12 +64,7 @@ public class ChessTerminal {
 
 	private GameState configure(File f) {
 		ArrayList<Character> text = null;
-		try {
-			text = FileRead.readFile(f);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+		text = FileRead.readFile(f);
 		int i = 0;
 		TextColor[] settings = new TextColor[6];
 		String buffer = "";

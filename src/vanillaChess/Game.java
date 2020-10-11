@@ -3,6 +3,7 @@ package vanillaChess;
 import miscFunct.FileRead;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -90,7 +91,7 @@ public class Game {
 		return internboard.getWidth();
 	}
 
-	public void init() throws IOException {
+	public void init() throws FileNotFoundException {
 		config = new File("./assets/board.brd");
 		boardDefault = FileRead.readFile(config, StandardCharsets.UTF_8);
 		internboard = new LinBoard(8, 8);
