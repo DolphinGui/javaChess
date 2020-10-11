@@ -20,4 +20,13 @@ public class AlgebraicMove implements Serializable {
 		origin = o;
 		promote =' ';
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof AlgebraicMove)) return false;
+		AlgebraicMove m = (AlgebraicMove) o;
+		return m.loc==loc && m.origin==origin && m.promote==promote;
+	}
+	
 }

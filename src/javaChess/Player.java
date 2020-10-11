@@ -8,9 +8,17 @@ public abstract class Player implements Runnable {
 	private boolean myTurn;
 	//private boolean exists;
 	int time;
-	AlgebraicMove lastmove;
-	AlgebraicMove ponder;
+	private AlgebraicMove lastmove;
+	private AlgebraicMove ponder;
 
+	public AlgebraicMove lastMove() {
+		return lastmove;
+	}
+	
+	public AlgebraicMove pondermove() {
+		return ponder;
+	}
+	
 	public Player(boolean white, Game game, boolean turn, int t) {
 		isWhite = white;
 		board = game;
@@ -34,12 +42,17 @@ public abstract class Player implements Runnable {
 		time = t;
 	}
 
+	public abstract void error(String s);
+	
 	//what it does on its turn, like thinking
 	abstract AlgebraicMove onTurn(int t);
  
 	//what it does off its turn, like pondering. Must end in wait()
 	abstract AlgebraicMove offTurn();
 
+	abstract void stopPonder();
+	abstract void ponderhit();
+	
 	public void switchTurns() {
 		myTurn = !myTurn;
 		this.notify();
