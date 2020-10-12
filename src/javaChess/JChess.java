@@ -42,6 +42,10 @@ public class JChess {
 			if (screen.resized()) {
 				screen.refreshGame(chess.getCharBoard());
 			}
+			if (result == 3) { // check if previous loop's result was a checkmate
+				screen.destroy(); // make this a victory screen
+				break;
+			}
 			String move = screen.listenGame();
 			screen.errorMessage("");
 			try {
