@@ -1,6 +1,11 @@
 package terminalChess;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.graphics.BasicTextImage;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
@@ -14,30 +19,50 @@ import com.googlecode.lanterna.terminal.Terminal;
  * 
  */
 public class Display {
-	
 
-	public static void layers(Screen screen, TextGraphics tGraphics, String[][] layers) throws IOException {
+
+	public void layers(String[][] layers) throws IOException {
 
 		screen.clear();
 
-		int width = screen.getTerminalSize().getColumns();
-		int height = screen.getTerminalSize().getRows();
+		int col = screen.getTerminalSize().getColumns();
+		int row = screen.getTerminalSize().getRows();
 
-		for (String[] l : layers) {
-			for (int i = 0; i < l.length; i++) {
-				String s = l[i];
-				tGraphics.putString(Math.floorDiv(width - s.length(), 2), Math.floorDiv(height - l.length, 2) + i, s);
+		BasicTextImage[] image = new BasicTextImage[layers.length];
+
+
+		for (int i = 0; i < layers.length; i++) {
+			String[] l = layers[i];
+
+			int width = l[0].length();
+			int height = l.length;
+
+			for(String s : l) {
+				if(width < s.length()) width = s.length();
 			}
+
+			image[i] = new BasicTextImage(width, height);
+
+			for(int y = 0; y < l.length; y++) {
+				String s = l[y];
+				for (int x = 0; x < s.length(); x++) {
+					image[i].setCharacterAt(x, y, new TextCharacter(s.charAt(x)));
+				} //TODO: fix this
+			}
+		}
+		for(BasicTextImage l : image) {
+			TerminalPosition pos = new TerminalPosition((col - l.getSize().getColumns())/2, (row - l.getSize().getRows())/2);
+			tGraphics.drawImage(pos, l);
 		}
 		screen.refresh();
 	}
-	
+
 	Terminal terminal;
 	Screen screen;
 	TextGraphics tGraphics;
 	SimpleTerminalResizeListener resizeListener;
-	
-	
+
+
 	public Display() throws IOException {
 		terminal = new DefaultTerminalFactory().createTerminal();
 		screen = new TerminalScreen(terminal);
@@ -60,12 +85,18 @@ public class Display {
 		terminal.close();
 	}
 
-	public char initStart() throws IOException {
-		layers(screen, tGraphics, GraphicsReader.readfiles("assets/start"));
+	public char initStart() throws FileNotFoundException, IOException {
+		layers(GraphicsReader.readfiles("assets/start"));
 		screen.refresh();
 		return screen.readInput().getCharacter();
 	}
-	
+
+	public char victoryScreen() throws FileNotFoundException, IOException {
+		layers(GraphicsReader.readfiles("assets/victory"));
+		screen.refresh();
+		return screen.readInput().getCharacter();
+	}
+
 	public boolean resized() {
 		return resizeListener.isTerminalResized();
 	}

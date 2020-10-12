@@ -23,8 +23,10 @@ public class JChess {
 			switch (choice) {
 			case 'l':
 				gameloop(chess, screen);
+				screen.victoryScreen();
 				break;
 			}
+			screen.destroy();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -36,13 +38,9 @@ public class JChess {
 		NotationInterperter denote = new NotationInterperter(chess.getWidth(), chess.getHeight());
 		boolean result = true;
 		screen.initGame(chess.getCharBoard());
-		while (true) {
+		while (result) {
 			if (screen.resized()) {
 				screen.refreshGame(chess.getCharBoard());
-			}
-			if (!result) { // check if previous loop's result was a checkmate
-				screen.destroy(); // make this a victory screen
-				break;
 			}
 			String move = screen.listenGame();
 			screen.errorMessage("");
@@ -55,6 +53,7 @@ public class JChess {
 			}
 			screen.turn(chess.getCharBoard(), move);
 		}
+		screen.end();
 	}
 
 }

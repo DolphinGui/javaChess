@@ -10,6 +10,7 @@ public abstract class Player implements Runnable {
 	int time;
 	private AlgebraicMove lastmove;
 	private AlgebraicMove ponder;
+	protected NotationInterperter denote;
 
 	public AlgebraicMove lastMove() {
 		return lastmove;
@@ -19,12 +20,13 @@ public abstract class Player implements Runnable {
 		return ponder;
 	}
 	
-	public Player(boolean white, Game game, boolean turn, int t) {
+	public Player(boolean white, Game game, boolean turn, int t, NotationInterperter n) {
 		isWhite = white;
 		board = game;
 		myTurn = turn;
 		//exists = true;
 		time = t;
+		denote = n;
 	}
 
 	public boolean turn() {
@@ -47,11 +49,13 @@ public abstract class Player implements Runnable {
 	//what it does on its turn, like thinking
 	abstract AlgebraicMove onTurn(int t);
  
-	//what it does off its turn, like pondering. Must end in wait()
+	//what it does off its turn, like pondering.
 	abstract AlgebraicMove offTurn();
 
 	abstract void stopPonder();
 	abstract void ponderhit();
+	abstract void victoryScreen();
+	abstract void lossScreen();
 	
 	public void switchTurns() {
 		myTurn = !myTurn;

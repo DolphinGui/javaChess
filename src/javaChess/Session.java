@@ -9,18 +9,20 @@ public class Session {
 	Player black;
 	Player white;
 	Game board;
+	NotationInterperter denote;
 	
 	// h is human, b is bot, n is network
 	public void init(char blackChoice, char whiteChoice) {
-		
-	}
-	
-	public void main() {
 		try {
 			board.init();
 		} catch (FileNotFoundException e) {
 			System.exit(1);
 		}
+		board = new Game();
+		denote = new NotationInterperter(board.getWidth(), board.getHeight());
+	}
+	
+	public void main() {
 		boolean exists = true;
 		do {
 			white.run();

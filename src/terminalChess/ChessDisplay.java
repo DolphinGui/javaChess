@@ -32,8 +32,6 @@ public class ChessDisplay {
 					drawTime(chess.screen, chess.tGraphics, sec);
 					sec++;
 					TimeUnit.SECONDS.sleep(1);
-				} catch (IOException e) {
-					e.printStackTrace();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -65,7 +63,7 @@ public class ChessDisplay {
 	private TerminalPosition boardPosition;
 	private Display chess;
 	
-	public ChessDisplay(Display c) throws IOException {
+	public ChessDisplay(Display c) {
 		exists = true;
 		timer = new ChessClock("clock");
 		history = new ArrayList<String[]>();
@@ -76,7 +74,7 @@ public class ChessDisplay {
 	}
 	
 	
-	private BasicTextImage boardSet(char[][] board) throws IOException {
+	private BasicTextImage boardSet(char[][] board) {
 		BasicTextImage result = new BasicTextImage(board.length * 3 + 1, board[0].length + 1);
 		boolean isWhite = false;
 		char[] ab = "abcdefghijklmnopqrstuvwxyz".toCharArray();
@@ -203,93 +201,105 @@ public class ChessDisplay {
 		return settings;
 	}
 	
-	public void destroy() throws IOException {
+	public void end() throws IOException {
 		exists = false;
-		chess.destroy();
 	}
 	
-	public void drawBoard(Screen screen, TextGraphics tGraphics, char[][] board) throws IOException {
+	private void drawBoard(char[][] board) {
 		BasicTextImage boardImage = boardSet(board);
-		tGraphics.drawImage(boardPosition, boardImage);
+		chess.tGraphics.drawImage(boardPosition, boardImage);
 	}
 
-	public void drawHistory(Screen screen, TextGraphics tGraphics, ArrayList<String[]> moves) throws IOException {
-		drawHistory(screen, tGraphics, moves.toArray(new String[moves.size()][]));
+	private void drawHistory(ArrayList<String[]> moves) {
+		drawHistory(moves.toArray(new String[moves.size()][]));
 	}
 
-	private void drawHistory(Screen screen, TextGraphics tGraphics, String[][] moves) {
+	private void drawHistory(String[][] moves) {
 		for (int i = 0; i < 5; i++) {
-			tGraphics.setCharacter(45, 6 + i, new TextCharacter('|', foreground, background));
+			chess.tGraphics.setCharacter(45, 6 + i, new TextCharacter('|', foreground, background));
 		}
 		if (moves.length != 0) {
 			for (int i = 0; i < moves.length; i++) {
-				tGraphics.putString(45 - moves[i][0].length(), 6 + i, moves[i][0]);
-				tGraphics.putString(46, 6 + i, moves[i][1]);
+				chess.tGraphics.putString(45 - moves[i][0].length(), 6 + i, moves[i][0]);
+				chess.tGraphics.putString(46, 6 + i, moves[i][1]);
 			}
 		}
 	}
 	
-	public void drawMove(Screen screen, TextGraphics tGraphics, String move) throws IOException {
+	private void drawMove(Screen screen, TextGraphics tGraphics, String move) {
 		tGraphics.putString(40, 15, move);
-		screen.refresh();
+		try {
+			screen.refresh();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public void drawTime(Screen screen, TextGraphics tGraphics, int seconds) throws IOException {
+	private void drawTime(Screen screen, TextGraphics tGraphics, int seconds) {
 		tGraphics.putString(47, 4, Integer.toString(seconds % 10));
 		tGraphics.putString(46, 4, Integer.toString((seconds / 10) % 6));
 		tGraphics.putString(44, 4, Integer.toString((seconds / 60) % 10));
 		tGraphics.putString(43, 4, Integer.toString((seconds / 600)));
-		screen.refresh();
-	}
-
-	public void error(Screen screen, TextGraphics tGraphics, String message) {
-		tGraphics.putString(40, 16, message);
-	}
-
-	public void initGame(char[][] board) throws IOException {
-		startGame(chess.screen, chess.tGraphics, board);
-		timer.start();
-		chess.resizeListener.onResized(chess.terminal, null);
-		chess.screen.refresh();
-	}
-
-	private void initTime(Screen screen, TextGraphics tGraphics) throws IOException {
-		tGraphics.putString(43, 4, "00:00");
-	}
-
-	public String listenGame() throws IOException {
-		String display = "moves: ";
-		String move = "";
-		drawMove(chess.screen, chess.tGraphics, "moves:       ");
-		while (move.length() < 5) {
-			KeyStroke input = chess.screen.readInput();
-			if (input.getKeyType() == KeyType.Enter||input.getKeyType()==KeyType.Escape) {
-				if (move.length() == 5)
-					break;
-				else
-					move = "";
-			}
-			if (input.getCharacter() == 'c' && input.isCtrlDown()) {
-				System.exit(0);
-			}
-			if(input.getKeyType()==KeyType.Backspace && move.length()!=0) {
-				move = move.substring(0, move.length()-1);
-				drawMove(chess.screen, chess.tGraphics, "moves:       ");
-			}else if(input.getKeyType()==KeyType.Character){
-				move = move.concat(Character.toString(input.getCharacter()));
-			}
-			drawMove(chess.screen, chess.tGraphics, display.concat(move));
+		try {
+			screen.refresh();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		move = move.substring(0, move.length() - 1);
-		return move;
 	}
 
 	public void errorMessage(String message) {
 		for(int i = 0; i < chess.screen.getTerminalSize().getColumns(); i++) {
 			chess.screen.setCharacter(i, 16, new TextCharacter(' '));
 		}
-		error(chess.screen, chess.tGraphics, message);
+		chess.tGraphics.putString(40, 16, message);
 	}
+	
+
+	public void initGame(char[][] board) {
+		startGame(board);
+		timer.start();
+		chess.resizeListener.onResized(chess.terminal, null);
+		try {
+			chess.screen.refresh();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String listenGame() {
+		String display = "moves: ";
+		String move = "";
+		drawMove(chess.screen, chess.tGraphics, "moves:       ");
+		while (move.length() < 5) {
+			KeyStroke input;
+			try {
+				input = chess.screen.readInput();
+				if (input.getKeyType() == KeyType.Enter||input.getKeyType()==KeyType.Escape) {
+					if (move.length() == 5)
+						break;
+					else
+						move = "";
+				}
+				if (input.getCharacter() == 'c' && input.isCtrlDown()) {
+					System.exit(0);
+				}
+				if(input.getKeyType()==KeyType.Backspace && move.length()!=0) {
+					move = move.substring(0, move.length()-1);
+					drawMove(chess.screen, chess.tGraphics, "moves:       ");
+				}else if(input.getKeyType()==KeyType.Character){
+					move = move.concat(Character.toString(input.getCharacter()));
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			drawMove(chess.screen, chess.tGraphics, display.concat(move));
+		}
+		move = move.substring(0, move.length() - 1);
+		return move;
+	}
+
+	
 	
 	private TextCharacter pieceFactory(char item, boolean pieceWhite, boolean tileWhite) {
 		TextColor piece;
@@ -308,19 +318,19 @@ public class ChessDisplay {
 	}
 
 	public void refreshGame(char[][] board) throws IOException {
-		startGame(chess.screen, chess.tGraphics, board);
+		startGame(board);
 		drawMove(chess.screen, chess.tGraphics, "moves:       ");
 		chess.screen.refresh();
 	}
 
-	public void startGame(Screen screen, TextGraphics tGraphics, char[][] board) throws IOException {
-		tGraphics.setForegroundColor(foreground);
-		tGraphics.setBackgroundColor(background);
-		screen.clear();
+	public void startGame(char[][] board)  {
+		chess.tGraphics.setForegroundColor(foreground);
+		chess.tGraphics.setBackgroundColor(background);
+		chess.screen.clear();
 		String[][] moves = {};
-		drawBoard(screen, tGraphics, board);
-		initTime(screen, tGraphics);
-		drawHistory(screen, tGraphics, moves);
+		drawBoard(board);
+		chess.tGraphics.putString(43, 4, "00:00");
+		drawHistory(moves);
 	}
 
 	public boolean resized() {
@@ -328,10 +338,10 @@ public class ChessDisplay {
 	}
 	
 	public void turn(char[][] board, String move) throws IOException {
-		drawBoard(chess.screen, chess.tGraphics, board);
-		String[] addition = { move, Integer.toString(sec) };
+		drawBoard(board);
+		String[] addition = { move, String.format("%d:%02d", sec / 60, sec) };
 		history.add(addition);
-		drawHistory(chess.screen, chess.tGraphics, history);
+		drawHistory(history);
 		chess.screen.refresh();
 	}
 

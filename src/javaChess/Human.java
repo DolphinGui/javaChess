@@ -1,42 +1,51 @@
 package javaChess;
 
+import terminalChess.ChessDisplay;
 import terminalChess.Display;
 import vanillaChess.Game;
 
 public class Human extends Player {
 
-	Display screen;
+	ChessDisplay screen;
 	
-	public Human(boolean white, Game game, boolean turn, int t, Display screen) {
-		super(white, game, turn, t);
+	public Human(boolean white, Game game, boolean turn, int t, NotationInterperter n, Display s) {
+		super(white, game, turn, t, n);
+		screen = new ChessDisplay(s);
+		screen.initGame(game.getCharBoard());
 	}
 
 	@Override
 	AlgebraicMove onTurn(int t) {
-		// TODO Auto-generated method stub
-		return null;
+		return denote.decode(screen.listenGame());
 	}
 
 	@Override
 	AlgebraicMove offTurn() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	public void run() {}
+	
+	@Override
 	public void error(String s) {
+		screen.errorMessage(s);
+	}
+
+	@Override
+	void stopPonder() {}
+
+	@Override
+	void ponderhit() {}
+
+	@Override
+	void victoryScreen() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	void stopPonder() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	void ponderhit() {
+	void lossScreen() {
 		// TODO Auto-generated method stub
 		
 	}
