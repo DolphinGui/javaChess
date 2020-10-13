@@ -91,12 +91,6 @@ public class Display {
 		return screen.readInput().getCharacter();
 	}
 
-	public char victoryScreen() throws FileNotFoundException, IOException {
-		layers(GraphicsReader.readfiles("assets/victory"));
-		screen.refresh();
-		return screen.readInput().getCharacter();
-	}
-
 	public boolean resized() {
 		return resizeListener.isTerminalResized();
 	}

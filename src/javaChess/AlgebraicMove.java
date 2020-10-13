@@ -21,6 +21,12 @@ public class AlgebraicMove implements Serializable {
 		promote =' ';
 	}
 	
+	public AlgebraicMove() {
+		loc = 0;
+		origin = 0;
+		promote = '\n';
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

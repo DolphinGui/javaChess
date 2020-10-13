@@ -71,7 +71,12 @@ public class Game {
 		return check(white, k, board);
 
 	}
-
+	
+	public boolean checkmate(boolean isWhiteTurn) {
+		if (trap(isWhiteTurn) && check(isWhiteTurn)) return true;
+		return false;
+	}
+	
 	public boolean checkmate() {
 		if (trap(whiteTurn) && check(whiteTurn))
 			return true;
@@ -229,9 +234,9 @@ public class Game {
 		}
 	}
 
-	/*
+	
 	@SuppressWarnings("unused")
-	private void printInternboard() { // this is a debug function. comment out later.
+	private void printInternboard() { // TODO: this is a debug function. comment out later.
 		char shorthand = ' ';
 		for (int n = internboard.getHeight() - 1; n >= 0; n--) {
 			for (int i = 0; i <= internboard.getWidth() - 1; i++) {
@@ -247,8 +252,8 @@ public class Game {
 			}
 			System.out.println();
 		}
-	}  */
-
+	}  
+	
 	private boolean trap(boolean whiteTurn) {
 		LinBoard bufferboard = internboard.copy();
 		King king;

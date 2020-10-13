@@ -3,6 +3,7 @@ package javaChess;
 public class NotationInterperter {
 	private int width;
 	private int height;
+	final String ab = "abcdefghijklmnopqrstuvwxyz";
 
 	NotationInterperter(int x, int y) {
 		width = x;
@@ -10,7 +11,7 @@ public class NotationInterperter {
 	}
 
 	public int denotate(String notatation) {
-		final String ab = "abcdefghijklmnopqrstuvwxyz"; // abcdefghijklmnopqrstuvwxyz zyxwvutsrqpomnlkjihgfedcba
+		 // abcdefghijklmnopqrstuvwxyz zyxwvutsrqpomnlkjihgfedcba
 		int result;
 		if (!Character.isDigit(notatation.charAt(1)))
 			throw new IllegalArgumentException("Not Algabraic notation");
@@ -25,6 +26,10 @@ public class NotationInterperter {
 	
 	public AlgebraicMove decode(String notatation) {
 		return new AlgebraicMove(denotate(notatation.substring(2, 4)), denotate(notatation.substring(0, 2)));
+	}
+	
+	public String notate(AlgebraicMove move) {
+		return ab.charAt(move.origin % 8) + Integer.toString(1 + move.origin / 8) + ab.charAt(move.loc % 8) + Integer.toString(1 + move.loc / 8);
 	}
 	
 }

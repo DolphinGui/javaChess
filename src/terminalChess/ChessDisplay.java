@@ -1,6 +1,7 @@
 package terminalChess;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -201,7 +202,13 @@ public class ChessDisplay {
 		return settings;
 	}
 	
-	public void end() throws IOException {
+	public char victoryScreen() throws FileNotFoundException, IOException {
+		chess.layers(GraphicsReader.readfiles("assets/victory"));
+		chess.screen.refresh();
+		return chess.screen.readInput().getCharacter();
+	}
+	
+	public void end() {
 		exists = false;
 	}
 	
@@ -338,6 +345,7 @@ public class ChessDisplay {
 	}
 	
 	public void turn(char[][] board, String move) throws IOException {
+		chess.screen.doResizeIfNecessary();
 		drawBoard(board);
 		String[] addition = { move, String.format("%d:%02d", sec / 60, sec) };
 		history.add(addition);

@@ -20,13 +20,14 @@ public abstract class Player implements Runnable {
 		return ponder;
 	}
 	
-	public Player(boolean white, Game game, boolean turn, int t, NotationInterperter n) {
+	public Player(boolean white, Game game, int t, NotationInterperter n) {
 		isWhite = white;
 		board = game;
-		myTurn = turn;
-		//exists = true;
+		myTurn = white;
 		time = t;
 		denote = n;
+		ponder = new AlgebraicMove();
+		lastmove = new AlgebraicMove();
 	}
 
 	public boolean turn() {
@@ -56,10 +57,11 @@ public abstract class Player implements Runnable {
 	abstract void ponderhit();
 	abstract void victoryScreen();
 	abstract void lossScreen();
+	abstract void updateScreen(AlgebraicMove m);
 	
 	public void switchTurns() {
 		myTurn = !myTurn;
-		this.notify();
+		stopPonder();
 	}
 
 	//override and call this
