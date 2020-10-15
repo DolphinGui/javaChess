@@ -3,8 +3,10 @@ package javaChess;
 import java.io.FileNotFoundException;
 
 import terminalChess.Display;
+import vanillaChess.AlgebraicMove;
 import vanillaChess.Game;
 import vanillaChess.InvalidMoveException;
+import vanillaChess.NotationInterperter;
 
 public class Session {
 	Player black;
@@ -15,7 +17,7 @@ public class Session {
 	public Session(Display db, Display dw) throws FileNotFoundException {
 		board = new Game();
 		board.init();
-		denote = new NotationInterperter(board.getWidth(), board.getHeight());
+		denote = board.getNotate();
 		black = new Human(false, board, 0, denote, db);
 		white = new Human(true, board, 0, denote, dw);
 	}

@@ -1,4 +1,4 @@
-package javaChess;
+package vanillaChess;
 
 public class NotationInterperter {
 	private int width;

@@ -5,7 +5,9 @@ import java.io.IOException;
 
 import terminalChess.ChessDisplay;
 import terminalChess.Display;
+import vanillaChess.AlgebraicMove;
 import vanillaChess.Game;
+import vanillaChess.NotationInterperter;
 
 public class Human extends Player {
 

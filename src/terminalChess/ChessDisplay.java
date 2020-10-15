@@ -282,7 +282,7 @@ public class ChessDisplay {
 			try {
 				input = chess.screen.readInput();
 				if (input.getKeyType() == KeyType.Enter||input.getKeyType()==KeyType.Escape) {
-					if (move.length() == 5)
+					if (move.length() == 6)
 						break;
 					else
 						move = "";
@@ -302,7 +302,7 @@ public class ChessDisplay {
 			
 			drawMove(chess.screen, chess.tGraphics, display.concat(move));
 		}
-		move = move.substring(0, move.length() - 1);
+		move = move.substring(0, 5);
 		return move;
 	}
 

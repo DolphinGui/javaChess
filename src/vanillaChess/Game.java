@@ -15,6 +15,7 @@ public class Game {
 	private King whiteKing;
 	private King blackKing;
 	private boolean whiteTurn;
+	private NotationInterperter notate;
 
 	private void boardSet() {
 		for (int i = 0; i < internboard.getLength(); i++) {
@@ -47,6 +48,7 @@ public class Game {
 		}
 		whiteTurn = true;
 	}
+	
 
 	private boolean check(boolean white) {
 		return check(white, internboard);
@@ -100,8 +102,13 @@ public class Game {
 		boardDefault = FileRead.readFile(config, StandardCharsets.UTF_8);
 		internboard = new LinBoard(8, 8);
 		this.boardSet();
+		notate = new NotationInterperter(internboard.getWidth(), internboard.getHeight());
 	}
 
+	public NotationInterperter getNotate() {
+		return notate;
+	}
+	
 	private void castle(int k, int r, LinBoard board) throws InvalidMoveException {
 		Piece king = board.getPiece(k);
 		Piece rook = board.getPiece(r);

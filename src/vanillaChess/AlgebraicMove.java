@@ -1,4 +1,4 @@
-package javaChess;
+package vanillaChess;
 
 import java.io.Serializable;
 

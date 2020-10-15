@@ -1,6 +1,8 @@
 package javaChess;
 
+import vanillaChess.AlgebraicMove;
 import vanillaChess.Game;
+import vanillaChess.NotationInterperter;
 
 public abstract class Player implements Runnable {
 	public final boolean isWhite;

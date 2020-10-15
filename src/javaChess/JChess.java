@@ -3,8 +3,6 @@ package javaChess;
 import java.io.IOException;
 
 import terminalChess.Display;
-import terminalChess.ChessDisplay;
-import vanillaChess.Game;
 
 public class JChess {
 
