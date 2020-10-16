@@ -20,7 +20,7 @@ public class JChess {
 			switch (choice) {
 			case 'l':
 				game = new Session(screen, screen);
-				game.localPlay();
+				game.play();
 				break;
 			}
 			screen.destroy();

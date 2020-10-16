@@ -22,7 +22,8 @@ public class Session {
 		white = new Human(true, board, 0, denote, dw);
 	}
 	
-	public void localPlay() {
+	
+	public void play() {
 		boolean exists = true;
 		boolean whiteTurn = true;
 		do {
@@ -35,33 +36,7 @@ public class Session {
 			black.stopPonder();
 			AlgebraicMove ponder = black.pondermove();
 			try {
-				exists = board.turn(move.loc, move.origin);
-				black.updateScreen(move);
-				if(ponder.equals(move)) black.ponderhit();
-				black.switchTurns();
-				white.switchTurns();
-				whiteTurn = !whiteTurn;
-			} catch (InvalidMoveException e) {
-				white.error(e.getMessage());
-			}
-		}while(exists);
-		if(board.checkmate(true)) white.victoryScreen();
-		else black.victoryScreen();
-	}
-	public void remotePlay() {
-		boolean exists = true;
-		boolean whiteTurn = true;
-		do {
-			white.run();
-			black.run();
-			
-			AlgebraicMove move;
-			if(whiteTurn)move = white.onTurn(0);
-			else move = black.onTurn(0);
-			black.stopPonder();
-			AlgebraicMove ponder = black.pondermove();
-			try {
-				exists = board.turn(move.loc, move.origin);
+				exists = board.turn(move);
 				black.updateScreen(move);
 				white.updateScreen(move);
 				if(ponder.equals(move)) black.ponderhit();

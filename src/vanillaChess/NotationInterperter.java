@@ -24,8 +24,9 @@ public class NotationInterperter {
 		return result;
 	}
 	
-	public AlgebraicMove decode(String notatation) {
-		return new AlgebraicMove(denotate(notatation.substring(2, 4)), denotate(notatation.substring(0, 2)));
+	public AlgebraicMove decode(String move) {
+		if(move.length()==5)return new AlgebraicMove(denotate(move.substring(2, 4)), denotate(move.substring(0, 2)), move.charAt(4));
+		return new AlgebraicMove(denotate(move.substring(2, 4)), denotate(move.substring(0, 2)));
 	}
 	
 	public String notate(AlgebraicMove move) {

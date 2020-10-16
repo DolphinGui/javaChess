@@ -1,4 +1,4 @@
-package networkChess;
+package javaChess;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

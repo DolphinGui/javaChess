@@ -290,7 +290,7 @@ public class Game {
 		return false;
 	}
 
-	public boolean turn(int loc, int origin, char piece) throws InvalidMoveException {
+	private boolean turn(int loc, int origin, char piece) throws InvalidMoveException {
 		boolean mate = check(whiteTurn);
 		if (mate && trap(whiteTurn))
 			return false;
@@ -300,7 +300,7 @@ public class Game {
 		}
 	}
 
-	public boolean turn(int loc, int origin) throws InvalidMoveException {
+	private boolean turn(int loc, int origin) throws InvalidMoveException {
 		boolean mate = check(whiteTurn);
 		if (mate && trap(whiteTurn))
 			return false;
@@ -308,5 +308,9 @@ public class Game {
 			move(loc, origin);
 			return !(check(whiteTurn) && trap(whiteTurn));
 		}
+	}
+	public boolean turn(AlgebraicMove m) throws InvalidMoveException {
+		if(m.promote!=' ')return turn(m.loc, m.origin, m.promote);
+		return turn(m.loc, m.origin);
 	}
 }
