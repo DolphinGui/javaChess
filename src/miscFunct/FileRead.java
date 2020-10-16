@@ -40,4 +40,12 @@ public class FileRead {
 		}
 		return result;
 	}
+	
+	public static String wordParse(String s, int index) {
+		String results = "";
+		for (int i = index; !Character.isWhitespace(s.charAt(i)); i++) {
+			results = results.concat(String.valueOf(s.charAt(i)));
+		}
+		return results;
+	}
 }

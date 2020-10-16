@@ -79,6 +79,10 @@ public class Game {
 		return false;
 	}
 	
+	public String getFen() {
+		return internboard.toFen();
+	}
+	
 	public boolean checkmate() {
 		if (trap(whiteTurn) && check(whiteTurn))
 			return true;

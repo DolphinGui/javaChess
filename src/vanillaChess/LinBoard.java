@@ -11,14 +11,41 @@ public class LinBoard {
 		if (rank == 0 || file == 0)
 			throw new IndexOutOfBoundsException();
 		board = new Piece[file * rank];
-		ranks = rank;
-		files = file;
+		ranks = rank; // x
+		files = file; // y
 	}
 
 	public LinBoard(Piece[] pieces, int rank, int file) {
 		board = pieces;
 		ranks = rank;
 		files = file;
+	}
+
+	public String toFen() {
+		String result = "";
+		int nCount = 0;
+		for(int x = ranks - 1; x >= 0; x--) {
+			for(int y = files - 1; y >=0; y--) {
+				Piece p = board[x*8 + y];
+				if(p == null) {
+					nCount++;
+				}else {
+					if(nCount!=0) {
+						result += nCount;
+						nCount = 0;
+					}else {
+						if(p.isFirst) result += Character.toString(Character.toUpperCase(p.shorthand));
+						else result +=Character.toString(p.shorthand);
+					}
+				}
+			}
+			if(nCount!=0) {
+				result += nCount;
+				nCount = 0;
+			}
+			result+="/";
+		}
+		return result;
 	}
 
 	public boolean checkFealty(int loc, boolean fealty) {
@@ -39,11 +66,11 @@ public class LinBoard {
 	public int toRow(int loc) {
 		return loc/files;
 	}
-	
+
 	public int toCol(int loc) {
 		return loc%ranks;
 	}
-	
+
 	public char[][] getCharBoard() {
 		char[][] results = new char[ranks][files];
 		char shorthand;
