@@ -1,5 +1,7 @@
 package javaChess;
 
+
+import javaChess.Session.ChessClock;
 import vanillaChess.AlgebraicMove;
 import vanillaChess.Game;
 import vanillaChess.NotationInterperter;
@@ -7,11 +9,11 @@ import vanillaChess.NotationInterperter;
 public abstract class Player implements Runnable {
 	public final boolean isWhite;
 	public final Game board;
-	private boolean myTurn;
+	protected boolean myTurn;
 	//private boolean exists;
-	int time;
-	private AlgebraicMove lastmove;
-	private AlgebraicMove ponder;
+	protected AlgebraicMove lastmove;
+	protected AlgebraicMove ponder;
+	protected ChessClock time;
 	protected NotationInterperter denote;
 
 	public AlgebraicMove lastMove() {
@@ -22,12 +24,12 @@ public abstract class Player implements Runnable {
 		return ponder;
 	}
 	
-	public Player(boolean white, Game game, int t, NotationInterperter n) {
+	public Player(boolean white, Game game, ChessClock c, NotationInterperter n) {
 		isWhite = white;
 		board = game;
 		myTurn = white;
-		time = t;
 		denote = n;
+		time = c;
 		ponder = new AlgebraicMove();
 		lastmove = new AlgebraicMove();
 	}
@@ -42,15 +44,13 @@ public abstract class Player implements Runnable {
 			ponder = offTurn();
 		}
 	}
-
-	public void updateTime(int t) {
-		time = t;
-	}
+	
+	abstract void drawTime(int w, int b);
 
 	public abstract void error(String s);
 	
 	//what it does on its turn, like thinking
-	abstract AlgebraicMove onTurn(int t);
+	abstract AlgebraicMove onTurn();
  
 	//what it does off its turn, like pondering.
 	abstract AlgebraicMove offTurn();

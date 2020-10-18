@@ -22,6 +22,10 @@ public class JChess {
 				game = new Session(screen, screen);
 				game.play();
 				break;
+			case 'b':
+				game = new Session(screen, true, "assets/stockfish_20090216_x64_bmi2.exe");
+				game.play();
+				break;
 			}
 			screen.destroy();
 		} catch (IOException e) {

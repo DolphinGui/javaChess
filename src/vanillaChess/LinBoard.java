@@ -33,10 +33,10 @@ public class LinBoard {
 					if(nCount!=0) {
 						result += nCount;
 						nCount = 0;
-					}else {
-						if(p.isFirst) result += Character.toString(Character.toUpperCase(p.shorthand));
-						else result +=Character.toString(p.shorthand);
 					}
+					if(p.isFirst) result += Character.toString(Character.toUpperCase(p.shorthand));
+					else result +=Character.toString(p.shorthand);
+
 				}
 			}
 			if(nCount!=0) {

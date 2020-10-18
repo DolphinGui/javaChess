@@ -37,12 +37,12 @@ public class Pawn extends Piece {
 		}
 
 		ArrayList<Integer> validX = new ArrayList<Integer>();
-		if (board.checkFealty(this.getLoc() + board.vecToInteger(west), isFirst)
-				&& board.getPiece(this.getLoc() + board.vecToInteger(west)) != null) {
+		if (board.checkFealty(location + board.vecToInteger(west), isFirst)
+				&& board.getPiece(location + board.vecToInteger(west)) != null) {
 			validX.add(board.vecToInteger(west) + location);
 		}
-		if (board.checkFealty(this.getLoc() + board.vecToInteger(east), isFirst)
-				&& board.getPiece(this.getLoc() + board.vecToInteger(west)) != null) {
+		if (board.checkFealty(location + board.vecToInteger(east), isFirst)
+				&& board.getPiece(location + board.vecToInteger(east)) != null) {
 			validX.add(board.vecToInteger(east) + location);
 
 		}

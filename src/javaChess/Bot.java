@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
+import javaChess.Session.ChessClock;
 import miscFunct.FileRead;
 import vanillaChess.AlgebraicMove;
 import vanillaChess.Game;
@@ -13,7 +14,7 @@ import vanillaChess.NotationInterperter;
 
 public class Bot extends Player {
 
-	public static class UCIbot implements Runnable {
+	public static class UCIbot {
 		private class Setting {
 			UCITypes type;
 			String str;
@@ -238,14 +239,22 @@ public class Bot extends Player {
 			writeFlush("position fen" + fen);
 		}
 
-		public void position(String fen, String[] moves) throws IOException {
+		public void position(String fen, AlgebraicMove[] moves) throws IOException {
 			String move = "";
-			for(String m: moves) {
-				move += m + " ";
+			for(AlgebraicMove m: moves) {
+				move += m.toString() + " ";
 			}
 			writeFlush("position fen" + fen + " moves" + move);
 		}
 
+		public void search(int wTime, int bTime) throws IOException {
+			writeFlush("go wtime " + wTime + " " + "btime" + bTime);
+			String ind = until("bestmove ");
+			String answer = ind + readAll();
+			lastmove = answer.substring(9, answer.indexOf("ponder "));
+			pondermove = answer.substring(answer.indexOf("ponder ") + 7);
+		}
+		
 		public void search(int sec) throws IOException {
 			writeFlush("go movetime " + sec);
 			String ind = until("bestmove ");
@@ -253,14 +262,7 @@ public class Bot extends Player {
 			lastmove = answer.substring(9, answer.indexOf("ponder "));
 			pondermove = answer.substring(answer.indexOf("ponder ") + 7);
 		}
-		private void searchInfinite() throws IOException {
-			writeFlush("go infinite");
-			String ind = until("bestmove ");
-			String answer = ind + readAll();
-			lastmove = answer.substring(9, answer.indexOf("ponder "));
-			pondermove = answer.substring(answer.indexOf("ponder ") + 7);
-		}
-
+		
 		private String until(String target) throws IOException {
 			String str = "";
 			int index = -1;
@@ -279,9 +281,6 @@ public class Bot extends Player {
 			}
 			return str;
 		}
-		public void stop() {
-			writeFlush("stop");
-		}
 		private void writeFlush(String str) {
 			try {
 				write.write(str + nl);
@@ -291,32 +290,23 @@ public class Bot extends Player {
 			}
 		}
 
-		@Override
-		public void run() {
-			try {
-				searchInfinite();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	UCIbot bot;
-	Thread searchThread;
 
-	public Bot(boolean white, Game game, int t, NotationInterperter n, String path) {
+	public Bot(boolean white, Game game, ChessClock t, NotationInterperter n, String path) {
 		super(white, game, t, n);
 		bot = new UCIbot(path);
-		searchThread = new Thread(bot);
 	}
 
 	@Override
 	public void error(String s) {}
 
 	@Override
-	AlgebraicMove onTurn(int t) {
+	AlgebraicMove onTurn() {
 		try {
-			bot.search(t);
+			if(time.time(myTurn)==-1) bot.search(5000);
+			else bot.search(time.time(myTurn), time.time(!myTurn)); //TODO: fix this to use bot
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -326,7 +316,7 @@ public class Bot extends Player {
 	@Override
 	AlgebraicMove offTurn() {
 		//bot.
-		return null;
+		return new AlgebraicMove();
 	}
 
 	@Override
@@ -368,6 +358,13 @@ public class Bot extends Player {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	void drawTime(int w, int b) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
 enum UCITypes {

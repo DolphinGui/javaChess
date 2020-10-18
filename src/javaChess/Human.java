@@ -2,7 +2,7 @@ package javaChess;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
+import javaChess.Session.ChessClock;
 import terminalChess.ChessDisplay;
 import terminalChess.Display;
 import vanillaChess.AlgebraicMove;
@@ -13,8 +13,8 @@ public class Human extends Player {
 
 	ChessDisplay screen;
 	
-	public Human(boolean white, Game game, int time, NotationInterperter n, Display s) {
-		super(white, game,  time, n);
+	public Human(boolean white, Game game, ChessClock time, NotationInterperter n, Display s) {
+		super(white, game,time, n);
 		screen = new ChessDisplay(s);
 		screen.initGame(game.getCharBoard());
 	}
@@ -30,7 +30,7 @@ public class Human extends Player {
 
 	
 	@Override
-	AlgebraicMove onTurn(int t) {
+	AlgebraicMove onTurn() {
 		AlgebraicMove move = denote.decode(screen.listenGame());
 		
 		return move;
@@ -71,6 +71,12 @@ public class Human extends Player {
 	void lossScreen() {
 		// TODO Auto-generated method stub
 		screen.end();
+	}
+
+	@Override
+	void drawTime(int w, int b) {
+		// TODO Auto-generated method stub
+		//screen.
 	}
 
 	

@@ -10,11 +10,8 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.BasicTextImage;
-import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.screen.Screen;
-
 import miscFunct.FileRead;
 
 public class ChessDisplay {
@@ -30,7 +27,7 @@ public class ChessDisplay {
 		public void run() {
 			while (exists) {
 				try {
-					drawTime(chess.screen, chess.tGraphics, sec);
+					drawTime(sec);
 					sec++;
 					TimeUnit.SECONDS.sleep(1);
 				} catch (InterruptedException e) {
@@ -233,22 +230,22 @@ public class ChessDisplay {
 		}
 	}
 	
-	private void drawMove(Screen screen, TextGraphics tGraphics, String move) {
-		tGraphics.putString(40, 15, move);
+	private void drawMove(String move) {
+		chess.tGraphics.putString(40, 15, move);
 		try {
-			screen.refresh();
+			chess.screen.refresh();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void drawTime(Screen screen, TextGraphics tGraphics, int seconds) {
-		tGraphics.putString(47, 4, Integer.toString(seconds % 10));
-		tGraphics.putString(46, 4, Integer.toString((seconds / 10) % 6));
-		tGraphics.putString(44, 4, Integer.toString((seconds / 60) % 10));
-		tGraphics.putString(43, 4, Integer.toString((seconds / 600)));
+	private void drawTime(int seconds) {
+		chess.tGraphics.putString(47, 4, Integer.toString(seconds % 10));
+		chess.tGraphics.putString(46, 4, Integer.toString((seconds / 10) % 6));
+		chess.tGraphics.putString(44, 4, Integer.toString((seconds / 60) % 10));
+		chess.tGraphics.putString(43, 4, Integer.toString((seconds / 600)));
 		try {
-			screen.refresh();
+			chess.screen.refresh();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -276,7 +273,7 @@ public class ChessDisplay {
 	public String listenGame() {
 		String display = "moves: ";
 		String move = "";
-		drawMove(chess.screen, chess.tGraphics, "moves:       ");
+		drawMove("moves:       ");
 		while (move.length() < 5) {
 			KeyStroke input;
 			try {
@@ -292,7 +289,7 @@ public class ChessDisplay {
 				}
 				if(input.getKeyType()==KeyType.Backspace && move.length()!=0) {
 					move = move.substring(0, move.length()-1);
-					drawMove(chess.screen, chess.tGraphics, "moves:       ");
+					drawMove("moves:       ");
 				}else if(input.getKeyType()==KeyType.Character){
 					move = move.concat(Character.toString(input.getCharacter()));
 				}
@@ -300,7 +297,7 @@ public class ChessDisplay {
 				e.printStackTrace();
 			}
 			
-			drawMove(chess.screen, chess.tGraphics, display.concat(move));
+			drawMove(display.concat(move));
 		}
 		move = move.substring(0, 5);
 		return move;
@@ -326,7 +323,7 @@ public class ChessDisplay {
 
 	public void refreshGame(char[][] board) throws IOException {
 		startGame(board);
-		drawMove(chess.screen, chess.tGraphics, "moves:       ");
+		drawMove("moves:       ");
 		chess.screen.refresh();
 	}
 
