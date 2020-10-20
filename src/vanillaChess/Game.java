@@ -17,7 +17,6 @@ public class Game {
 	private King whiteKing;
 	private King blackKing;
 	private boolean whiteTurn;
-	private NotationInterperter notate;
 	private ArrayList<AlgebraicMove> history;
 	private int halfMovesSinceAction;
 	private int fullMoves;
@@ -138,12 +137,8 @@ public class Game {
 		boardDefault = FileRead.readFile(config, StandardCharsets.UTF_8);
 		internboard = new LinBoard(8, 8);
 		boardSet();
-		notate = new NotationInterperter(internboard.getWidth(), internboard.getHeight());
 	}
 
-	public NotationInterperter getNotate() {
-		return notate;
-	}
 	//returns in FENotation
 	private String castleAvailibility(LinBoard board) {
 		String result = "";

@@ -4,7 +4,6 @@ package javaChess;
 import javaChess.Session.ChessClock;
 import vanillaChess.AlgebraicMove;
 import vanillaChess.Game;
-import vanillaChess.NotationInterperter;
 
 public abstract class Player implements Runnable {
 	public final boolean isWhite;
@@ -14,7 +13,6 @@ public abstract class Player implements Runnable {
 	protected AlgebraicMove lastmove;
 	protected AlgebraicMove ponder;
 	protected ChessClock time;
-	protected NotationInterperter denote;
 
 	public AlgebraicMove lastMove() {
 		return lastmove;
@@ -24,11 +22,10 @@ public abstract class Player implements Runnable {
 		return ponder;
 	}
 	
-	public Player(boolean white, Game game, ChessClock c, NotationInterperter n) {
+	public Player(boolean white, Game game, ChessClock c) {
 		isWhite = white;
 		board = game;
 		myTurn = white;
-		denote = n;
 		time = c;
 		ponder = new AlgebraicMove();
 		lastmove = new AlgebraicMove();

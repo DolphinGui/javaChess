@@ -10,7 +10,6 @@ import javaChess.Session.ChessClock;
 import miscFunct.FileRead;
 import vanillaChess.AlgebraicMove;
 import vanillaChess.Game;
-import vanillaChess.NotationInterperter;
 
 public class Bot extends Player {
 
@@ -294,8 +293,8 @@ public class Bot extends Player {
 
 	UCIbot bot;
 
-	public Bot(boolean white, Game game, ChessClock t, NotationInterperter n, String path) {
-		super(white, game, t, n);
+	public Bot(boolean white, Game game, ChessClock t, String path) {
+		super(white, game, t);
 		bot = new UCIbot(path);
 	}
 
@@ -310,7 +309,7 @@ public class Bot extends Player {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return denote.decode(bot.lastmove);
+		return board.decode(bot.lastmove);
 	}
 
 	@Override

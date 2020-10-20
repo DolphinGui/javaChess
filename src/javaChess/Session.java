@@ -6,7 +6,6 @@ import terminalChess.Display;
 import vanillaChess.AlgebraicMove;
 import vanillaChess.Game;
 import vanillaChess.InvalidMoveException;
-import vanillaChess.NotationInterperter;
 
 public class Session {
 	public static class ChessClock implements Runnable{
@@ -62,51 +61,46 @@ public class Session {
 	Player black;
 	Player white;
 	Game board;
-	NotationInterperter denote;
 	ChessClock time;
 
 	public Session(Display db, Display dw) throws FileNotFoundException {
 		board = new Game();
 		board.init();
-		denote = board.getNotate();
 		time = new ChessClock(white, black, -1, -1);
-		black = new Human(false, board, time, denote, db);
-		white = new Human(true, board, time, denote, dw);
+		black = new Human(false, board, time, db);
+		white = new Human(true, board, time, dw);
 	}
 
 	public Session(Display db, Display dw, int b, int w) throws FileNotFoundException {
 		board = new Game();
 		board.init();
-		denote = board.getNotate();
 		time = new ChessClock(white, black, w, b);
-		black = new Human(false, board, time, denote, db);
-		white = new Human(true, board, time, denote, dw);
+		black = new Human(false, board, time, db);
+		white = new Human(true, board, time, dw);
 	}
 
 	public Session(Display d, int b, int w, boolean isHumanWhite, String botPath) throws FileNotFoundException {
 		board = new Game();
 		board.init();
-		denote = board.getNotate();
 		time = new ChessClock(white, black, w, b);
 		if(isHumanWhite) {
-			black = new Bot(false,board, time, denote, botPath);
-			white = new Human(true, board, time, denote, d);
+			black = new Bot(false,board, time, botPath);
+			white = new Human(true, board, time,  d);
 		}else {
-			white = new Bot(false,board, time, denote, botPath);
-			black = new Human(true, board, time, denote, d);
+			white = new Bot(false,board, time, botPath);
+			black = new Human(true, board, time, d);
 		}
 	}
 	public Session(Display d, boolean isHumanWhite, String botPath) throws FileNotFoundException {
 		board = new Game();
 		board.init();
-		denote = board.getNotate();
 		time = new ChessClock(white, black, -1, -1);
 		if(isHumanWhite) {
-			black = new Bot(false,board, time, denote, botPath);
-			white = new Human(true, board, time, denote, d);
+			black = new Bot(false,board, time, botPath);
+			white = new Human(true, board, time, d);
 		}else {
-			white = new Bot(false,board, time, denote, botPath);
-			black = new Human(true, board, time, denote, d);
+			white = new Bot(false,board, time, botPath);
+			black = new Human(true, board, time, d);
 		}
 	}
 	

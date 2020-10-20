@@ -7,14 +7,13 @@ import terminalChess.ChessDisplay;
 import terminalChess.Display;
 import vanillaChess.AlgebraicMove;
 import vanillaChess.Game;
-import vanillaChess.NotationInterperter;
 
 public class Human extends Player {
 
 	ChessDisplay screen;
 	
-	public Human(boolean white, Game game, ChessClock time, NotationInterperter n, Display s) {
-		super(white, game,time, n);
+	public Human(boolean white, Game game, ChessClock time, Display s) {
+		super(white, game,time);
 		screen = new ChessDisplay(s);
 		screen.initGame(game.getCharBoard());
 	}
@@ -22,7 +21,7 @@ public class Human extends Player {
 	@Override
 	void updateScreen(AlgebraicMove m) {
 		try {
-			screen.turn(board.getCharBoard(), denote.notate(m));
+			screen.turn(board.getCharBoard(), board.notate(m));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -31,7 +30,7 @@ public class Human extends Player {
 	
 	@Override
 	AlgebraicMove onTurn() {
-		AlgebraicMove move = denote.decode(screen.listenGame());
+		AlgebraicMove move = board.decode(screen.listenGame());
 		
 		return move;
 	}
