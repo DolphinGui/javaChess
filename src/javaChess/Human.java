@@ -64,13 +64,13 @@ public class Human extends Player {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		screen.end();
+		screen.endClock();
 	}
 
 	@Override
 	void lossScreen() {
 		// TODO Auto-generated method stub
-		screen.end();
+		screen.endClock();
 	}
 
 	@Override

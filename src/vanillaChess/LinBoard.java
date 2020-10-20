@@ -24,8 +24,8 @@ public class LinBoard {
 	public String toFen() {
 		String result = "";
 		int nCount = 0;
-		for(int x = ranks - 1; x >= 0; x--) {
-			for(int y = files - 1; y >=0; y--) {
+		for(int x = 0; x < ranks; x++) {
+			for(int y = 0; y < files; y++) {
 				Piece p = board[x*8 + y];
 				if(p == null) {
 					nCount++;

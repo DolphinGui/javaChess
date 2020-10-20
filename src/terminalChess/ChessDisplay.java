@@ -59,6 +59,10 @@ public class ChessDisplay {
 	ArrayList<String[]> history;
 	
 	private TerminalPosition boardPosition;
+	/*should just be a subclass, 
+	 * but for some reason it made
+	 *  new terminals, so this is
+	 *  now a box. Should debug later.*/
 	private Display chess;
 	
 	public ChessDisplay(Display c) {
@@ -205,7 +209,7 @@ public class ChessDisplay {
 		return chess.screen.readInput().getCharacter();
 	}
 	
-	public void end() {
+	public void endClock() {
 		exists = false;
 	}
 	

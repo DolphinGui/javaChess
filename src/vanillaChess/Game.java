@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Game {
+	final String ab = "abcdefghijklmnopqrstuvwxyz";
+
 	private ArrayList<Character> boardDefault;
 	private File config;
 	private LinBoard internboard;
@@ -16,39 +18,58 @@ public class Game {
 	private King blackKing;
 	private boolean whiteTurn;
 	private NotationInterperter notate;
+	private ArrayList<AlgebraicMove> history;
+	private int halfMovesSinceAction;
+	private int fullMoves;
+	private String enPassantMove;
 
 	private void boardSet() {
-		for (int i = 0; i < internboard.getLength(); i++) {
+		int inc = internboard.getWidth() * internboard.getHeight()-1;
+		for (int i = 0; inc >= 0; i++) {
 			boolean white = Character.isUpperCase(boardDefault.get(i)); // uppercases are white
 			char c = Character.toLowerCase(boardDefault.get(i));
 			switch (c) {
 			case 'r':
-				internboard.set(i, new Rook(i, white));
+				internboard.set(inc, new Rook(inc, white));
+				inc--;
 				break;
 			case 'b':
-				internboard.set(i, new Bishop(i, white));
+				internboard.set(inc, new Bishop(inc, white));
+				inc--;
 				break;
-			case 'k':
-				internboard.set(i, new Knight(i, white));
+			case 'n':
+				internboard.set(inc, new Knight(inc, white));
+				inc--;
 				break;
-			case 'x':
-				internboard.set(i, new Queen(i, white));
+			case 'q':
+				internboard.set(inc, new Queen(inc, white));
+				inc--;
 				break;
 			case 'p':
-				internboard.set(i, new Pawn(i, white));
+				internboard.set(inc, new Pawn(inc, white));
+				inc--;
 				break;
-			case 'y':
-				internboard.set(i, new King(i, white));
+			case 'k':
+				internboard.set(inc, new King(inc, white));
 				if (white)
-					whiteKing = (King) internboard.getPiece(i);
+					whiteKing = (King) internboard.getPiece(inc);
 				else
-					blackKing = (King) internboard.getPiece(i);
+					blackKing = (King) internboard.getPiece(inc);
+				inc--;
 				break;
+			default:
+				if(Character.isDigit(c)) {
+					inc-=Character.getNumericValue(c);
+				}
 			}
 		}
 		whiteTurn = true;
+		history = new ArrayList<AlgebraicMove>();
+		halfMovesSinceAction = 0; // for the 50 move rule, necessary for FEN
+		fullMoves = 0;
+		enPassantMove = null;
 	}
-	
+
 
 	private boolean check(boolean white) {
 		return check(white, internboard);
@@ -73,16 +94,27 @@ public class Game {
 		return check(white, k, board);
 
 	}
-	
+
 	public boolean checkmate(boolean isWhiteTurn) {
 		if (trap(isWhiteTurn) && check(isWhiteTurn)) return true;
 		return false;
 	}
-	
+
 	public String getFen() {
-		return internboard.toFen();
+		String after =" ";
+		if(whiteTurn) after += "w ";
+		else after +="b ";
+
+		after +=castleAvailibility(internboard) + " ";
+		if(enPassantMove == null) after += "- ";
+		else after +=enPassantMove;
+		
+		after += halfMovesSinceAction + " ";
+		after += fullMoves;
+
+		return internboard.toFen() + after;
 	}
-	
+
 	public boolean checkmate() {
 		if (trap(whiteTurn) && check(whiteTurn))
 			return true;
@@ -102,17 +134,56 @@ public class Game {
 	}
 
 	public void init() throws FileNotFoundException {
-		config = new File("./assets/board.brd");
+		config = new File("./assets/startingboard.brd");
 		boardDefault = FileRead.readFile(config, StandardCharsets.UTF_8);
 		internboard = new LinBoard(8, 8);
-		this.boardSet();
+		boardSet();
 		notate = new NotationInterperter(internboard.getWidth(), internboard.getHeight());
 	}
 
 	public NotationInterperter getNotate() {
 		return notate;
 	}
-	
+	//returns in FENotation
+	private String castleAvailibility(LinBoard board) {
+		String result = "";
+		Rook wQueenside = null, wKingside = null, bQueenside = null, bKingside = null;
+		King wKing = null, bKing = null;
+		/*Technically implementation dependent on board,
+		 * must be rewritten whenever board is changed.
+		 * This can also have undefined behavior in cases of 
+		 * 1 or less kings.*/
+		for(Piece p : board.getBoard()) { 
+			if(p instanceof Rook) {
+				if(!p.hasMoved()) {
+					if(p.isFirst) { 
+						if(wQueenside==null) wQueenside = (Rook) p;
+						wKingside = (Rook) p;
+					}else {
+						if(bQueenside==null) bQueenside = (Rook) p;
+						bKingside = (Rook) p;
+					}	
+				}	
+			}else if(p instanceof King) {
+				if(p.isFirst) wKing = (King) p;
+				else bKing = (King) p;
+			}
+		}
+		if(!wKing.hasMoved()) {
+			if(!wKingside.hasMoved()) result += "K";
+			if(!wQueenside.hasMoved()) result += "Q";
+		}
+		if(!bKing.hasMoved()) {
+			if(!bKingside.hasMoved()) result += "k";
+			if(!bQueenside.hasMoved()) result += "w";
+		}
+
+		if(result.isEmpty()) return"-";
+
+		return result;
+	}
+
+	// (k)ing's position, then (r)ook's position.
 	private void castle(int k, int r, LinBoard board) throws InvalidMoveException {
 		Piece king = board.getPiece(k);
 		Piece rook = board.getPiece(r);
@@ -245,7 +316,7 @@ public class Game {
 		}
 	}
 
-	
+
 	@SuppressWarnings("unused")
 	private void printInternboard() { // TODO: this is a debug function. comment out later.
 		char shorthand = ' ';
@@ -264,7 +335,7 @@ public class Game {
 			System.out.println();
 		}
 	}  
-	
+
 	private boolean trap(boolean whiteTurn) {
 		LinBoard bufferboard = internboard.copy();
 		King king;
@@ -313,8 +384,53 @@ public class Game {
 			return !(check(whiteTurn) && trap(whiteTurn));
 		}
 	}
-	public boolean turn(AlgebraicMove m) throws InvalidMoveException {
-		if(m.promote!=' ')return turn(m.loc, m.origin, m.promote);
-		return turn(m.loc, m.origin);
+	public AlgebraicMove[] history() {
+		return history.toArray(new AlgebraicMove[history.size()]);
 	}
+	public boolean turn(AlgebraicMove m) throws InvalidMoveException {
+		boolean result;
+		if(m.promote!=' ')result = turn(m.loc, m.origin, m.promote);
+		result = turn(m.loc, m.origin);
+		history.add(m);
+		if(internboard.getPiece(m.origin) instanceof Pawn 
+				|| internboard.getPiece(m.origin) != null)
+			halfMovesSinceAction = 0;
+		else halfMovesSinceAction++;
+		if(internboard.getPiece(m.origin) instanceof Pawn) {
+			int i;
+			if(internboard.getPiece(m.origin).isFirst) i = -internboard.getWidth();
+			else i = internboard.getWidth();
+			enPassantMove = code(m.origin + i);
+		}
+		if(whiteTurn) fullMoves++;
+		return result;
+	}
+
+	public int denotate(String notatation) {
+		// abcdefghijklmnopqrstuvwxyz zyxwvutsrqpomnlkjihgfedcba
+		int result;
+		if (!Character.isDigit(notatation.charAt(1)))
+			throw new IllegalArgumentException("Not Algabraic notation");
+		if (ab.indexOf(notatation.charAt(0)) == -1 || ab.indexOf(notatation.charAt(0)) > internboard.getHeight())
+			throw new IllegalArgumentException("Not Algabraic notation");
+		result = (Character.getNumericValue(notatation.charAt(1)) - 1) * internboard.getWidth();
+		result += ab.indexOf(Character.toLowerCase(notatation.charAt(0)));
+		if (result >= internboard.getHeight() * internboard.getWidth()) 
+			throw new IndexOutOfBoundsException("Out of bounds");
+		return result;
+	}
+
+	public AlgebraicMove decode(String move) {
+		if(move.length()==5)return new AlgebraicMove(denotate(move.substring(2, 4)), denotate(move.substring(0, 2)), move.charAt(4));
+		return new AlgebraicMove(denotate(move.substring(2, 4)), denotate(move.substring(0, 2)));
+	}
+
+	private String code(int m) {
+		return ab.charAt(m % 8) + Integer.toString(1 + m / 8);
+	}
+
+	public String notate(AlgebraicMove move) {
+		return code(move.origin) + code(move.loc);
+	}
+
 }

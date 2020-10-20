@@ -306,7 +306,7 @@ public class Bot extends Player {
 	AlgebraicMove onTurn() {
 		try {
 			if(time.time(myTurn)==-1) bot.search(5000);
-			else bot.search(time.time(myTurn), time.time(!myTurn)); //TODO: fix this to use bot
+			else bot.search(time.time(myTurn), time.time(!myTurn));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

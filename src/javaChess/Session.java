@@ -1,7 +1,6 @@
 package javaChess;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 
 import terminalChess.Display;
 import vanillaChess.AlgebraicMove;
@@ -65,7 +64,6 @@ public class Session {
 	Game board;
 	NotationInterperter denote;
 	ChessClock time;
-	private ArrayList<AlgebraicMove> history;
 
 	public Session(Display db, Display dw) throws FileNotFoundException {
 		board = new Game();
@@ -115,7 +113,6 @@ public class Session {
 	public void play() {
 		boolean exists = true;
 		boolean whiteTurn = true;
-		history = new ArrayList<AlgebraicMove>();
 		//Thread wThread = new Thread(white);
 		//Thread bThread = new Thread(black);
 		time.start();
@@ -143,7 +140,6 @@ public class Session {
 			} catch (InvalidMoveException e) {
 				white.error(e.getMessage());
 			}
-			history.add(move);
 			time.swap();
 		}while(exists);
 		time.stop();
