@@ -85,8 +85,6 @@ public class ChessDisplay {
 			for (int row = 0; row < board[col].length; row++) {
 				char item = board[col][board[col].length - 1 - row];
 
-				if (item == 'n')
-					item = ' ';
 				TextCharacter piece = pieceFactory(item, Character.isUpperCase(item), isWhite);
 				TextCharacter space = pieceFactory(' ', isWhite, isWhite);
 				result.setCharacterAt(col * 3, row, space);

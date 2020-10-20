@@ -23,49 +23,46 @@ public class Game {
 	private String enPassantMove;
 
 	private void boardSet() {
-		int inc = internboard.getWidth() * internboard.getHeight()-1;
-		for (int i = 0; inc >= 0; i++) {
+		int x = 0, y = internboard.getHeight()-1;
+		for (int i = 0; boardDefault.get(i)!=' '; i++) {
 			boolean white = Character.isUpperCase(boardDefault.get(i)); // uppercases are white
 			char c = Character.toLowerCase(boardDefault.get(i));
 			switch (c) {
 			case 'r':
-				internboard.set(inc, new Rook(inc, white));
-				inc--;
+				internboard.set(y*8+x, new Rook(y*8+x, white));
 				break;
 			case 'b':
-				internboard.set(inc, new Bishop(inc, white));
-				inc--;
+				internboard.set(y*8+x, new Bishop(y*8+x, white));
 				break;
 			case 'n':
-				internboard.set(inc, new Knight(inc, white));
-				inc--;
+				internboard.set(y*8+x, new Knight(y*8+x, white));
 				break;
 			case 'q':
-				internboard.set(inc, new Queen(inc, white));
-				inc--;
+				internboard.set(y*8+x, new Queen(y*8+x, white));
 				break;
 			case 'p':
-				internboard.set(inc, new Pawn(inc, white));
-				inc--;
+				internboard.set(y*8+x, new Pawn(y*8+x, white));
 				break;
 			case 'k':
-				internboard.set(inc, new King(inc, white));
+				internboard.set(y*8+x, new King(y*8+x, white));
 				if (white)
-					whiteKing = (King) internboard.getPiece(inc);
+					whiteKing = (King) internboard.getPiece(y*8+x);
 				else
-					blackKing = (King) internboard.getPiece(inc);
-				inc--;
+					blackKing = (King) internboard.getPiece(y*8+x);
 				break;
+			case '/':
+				y--;
+				x = 0;
 			default:
-				if(Character.isDigit(c)) {
-					inc-=Character.getNumericValue(c);
-				}
+				if(Character.isDigit(c)) 
+					x-=Character.getNumericValue(c);
 			}
+			if(c!='/') x++;
 		}
 		whiteTurn = true;
 		history = new ArrayList<AlgebraicMove>();
 		halfMovesSinceAction = 0; // for the 50 move rule, necessary for FEN
-		fullMoves = 0;
+		fullMoves = 1;
 		enPassantMove = null;
 	}
 
@@ -106,8 +103,8 @@ public class Game {
 
 		after +=castleAvailibility(internboard) + " ";
 		if(enPassantMove == null) after += "- ";
-		else after +=enPassantMove;
-		
+		else after +=enPassantMove + " ";
+
 		after += halfMovesSinceAction + " ";
 		after += fullMoves;
 
@@ -387,15 +384,15 @@ public class Game {
 		if(m.promote!=' ')result = turn(m.loc, m.origin, m.promote);
 		result = turn(m.loc, m.origin);
 		history.add(m);
-		if(internboard.getPiece(m.origin) instanceof Pawn 
-				|| internboard.getPiece(m.origin) != null)
+		if(internboard.getPiece(m.loc) instanceof Pawn 
+				|| internboard.getPiece(m.loc) != null)
 			halfMovesSinceAction = 0;
 		else halfMovesSinceAction++;
-		if(internboard.getPiece(m.origin) instanceof Pawn) {
+		if(internboard.getPiece(m.loc) instanceof Pawn) {
 			int i;
-			if(internboard.getPiece(m.origin).isFirst) i = -internboard.getWidth();
+			if(internboard.getPiece(m.loc).isFirst) i = -internboard.getWidth();
 			else i = internboard.getWidth();
-			enPassantMove = code(m.origin + i);
+			enPassantMove = code(m.loc + i);
 		}
 		if(whiteTurn) fullMoves++;
 		return result;

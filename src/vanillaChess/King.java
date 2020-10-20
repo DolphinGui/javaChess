@@ -6,7 +6,7 @@ public class King extends Piece {
 	Integer[][] moves = { { 1, 1 }, { 1, 0 }, { 1, -1 }, { 0, 1 }, { 0, -1 }, { -1, 1 }, { -1, 0 }, { -1, -1 } };
 
 	public King(int loc, boolean fealty) {
-		super(loc, fealty, "King", 'y');
+		super(loc, fealty, "King", 'k');
 	}
 
 	public Integer[] getMoves(LinBoard board) {

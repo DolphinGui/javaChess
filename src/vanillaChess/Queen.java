@@ -7,7 +7,7 @@ import miscFunct.ArrayMan;
 public class Queen extends Piece {
 
 	public Queen(int loc, boolean fealty) {
-		super(loc, fealty, "Queen", 'x');
+		super(loc, fealty, "Queen", 'q');
 	}
 
 	private Integer[] bishop(LinBoard board, boolean forward, boolean polarity) {
