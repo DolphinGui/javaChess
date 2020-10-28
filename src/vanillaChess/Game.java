@@ -12,7 +12,6 @@ public class Game {
 	final String ab = "abcdefghijklmnopqrstuvwxyz";
 
 	private ArrayList<Character> boardDefault;
-	private File config;
 	private LinBoard internboard;
 	private King whiteKing;
 	private King blackKing;
@@ -60,7 +59,7 @@ public class Game {
 			if(c!='/') x++;
 		}
 		whiteTurn = true;
-		history = new ArrayList<AlgebraicMove>();
+		history = new ArrayList<>();
 		halfMovesSinceAction = 0; // for the 50 move rule, necessary for FEN
 		fullMoves = 1;
 		enPassantMove = null;
@@ -92,8 +91,7 @@ public class Game {
 	}
 
 	public boolean checkmate(boolean isWhiteTurn) {
-		if (trap(isWhiteTurn) && check(isWhiteTurn)) return true;
-		return false;
+		return trap(isWhiteTurn) && check(isWhiteTurn);
 	}
 
 	public String getFen() {
@@ -112,9 +110,7 @@ public class Game {
 	}
 
 	public boolean checkmate() {
-		if (trap(whiteTurn) && check(whiteTurn))
-			return true;
-		return false;
+		return trap(whiteTurn) && check(whiteTurn);
 	}
 
 	public char[][] getCharBoard() {
@@ -129,8 +125,8 @@ public class Game {
 		return internboard.getWidth();
 	}
 
-	public void init() throws FileNotFoundException {
-		config = new File("./assets/startingboard.brd");
+	public void init() {
+		File config = new File("./assets/startingboard.brd");
 		boardDefault = FileRead.readFile(config, StandardCharsets.UTF_8);
 		internboard = new LinBoard(8, 8);
 		boardSet();
@@ -212,7 +208,6 @@ public class Game {
 		whiteTurn = !whiteTurn;
 		king.moved();
 		rook.moved();
-		return;
 	}
 
 	private void move(int loc, int origin, char c) throws InvalidMoveException {
@@ -220,23 +215,13 @@ public class Game {
 		Piece p = internboard.getPiece(origin);
 		Piece r;
 		if(p instanceof Pawn&&internboard.toRow(loc)==7||internboard.toRow(loc)==0){
-			switch(c) {
-			case'q':
-				r = new Queen(loc, whiteTurn);
-				break;
-			case'n':
-				r = new Queen(loc, whiteTurn);
-				break;
-			case'r':
-				r = new Queen(loc, whiteTurn);
-				break;
-			case'b':
-				r = new Queen(loc, whiteTurn);
-				break;
-			default:
-				r = new Pawn(loc, whiteTurn);
-				break;
-			}
+			r = switch (c) {
+				case 'q' -> new Queen(loc, whiteTurn);
+				case 'n' -> new Knight(loc, whiteTurn);
+				case 'r' -> new Rook(loc, whiteTurn);
+				case 'b' -> new Bishop(loc, whiteTurn);
+				default -> new Pawn(loc, whiteTurn);
+			};
 			for (Integer m : p.getMoves(internboard)) {
 				if (m == loc) { // validates that the resulting location is a valid move
 					set(loc, origin, bufferboard);
@@ -298,11 +283,9 @@ public class Game {
 		if(board.getPiece(origin) instanceof Pawn && board.getPiece(loc - board.getWidth()) instanceof Pawn) {
 			set(loc, origin, board);
 			board.set(loc - board.getWidth(), null);
-			return;
 		}else if(board.getPiece(origin) instanceof Pawn && board.getPiece(loc + board.getWidth()) instanceof Pawn){
 			set(loc, origin, board);
 			board.set(loc + board.getWidth(), null);
-			return;
 		}else{
 			throw new InvalidMoveException("Invalid Passant");
 		}
@@ -311,7 +294,7 @@ public class Game {
 
 	@SuppressWarnings("unused")
 	private void printInternboard() { // TODO: this is a debug function. comment out later.
-		char shorthand = ' ';
+		char shorthand;
 		for (int n = internboard.getHeight() - 1; n >= 0; n--) {
 			for (int i = 0; i <= internboard.getWidth() - 1; i++) {
 				Piece p = internboard.getPiece(i + n * 8);
@@ -339,7 +322,7 @@ public class Game {
 			king = blackKing;
 			oppKing = whiteKing.getLoc();
 		}
-		ArrayList<Integer> moves = new ArrayList<Integer>(Arrays.asList(king.getMoves(internboard)));
+		ArrayList<Integer> moves = new ArrayList<>(Arrays.asList(king.getMoves(internboard)));
 		for (Piece p : internboard.getPieces(!whiteTurn)) {
 			moves.removeAll(Arrays.asList(p.getMoves(internboard)));
 		}
@@ -352,9 +335,7 @@ public class Game {
 			if (check(whiteTurn))
 				return true;
 		}
-		if (moves.size() == 0)
-			return true;
-		return false;
+		return moves.size() == 0;
 	}
 
 	private boolean turn(int loc, int origin, char piece) throws InvalidMoveException {
@@ -377,11 +358,12 @@ public class Game {
 		}
 	}
 	public AlgebraicMove[] history() {
-		return history.toArray(new AlgebraicMove[history.size()]);
+		return history.toArray(new AlgebraicMove[0]);
 	}
 	public boolean turn(AlgebraicMove m) throws InvalidMoveException {
 		boolean result;
-		if(m.promote!=' ')result = turn(m.loc, m.origin, m.promote);
+		if(m.promote!=' ')//noinspection UnusedAssignment
+			result = turn(m.loc, m.origin, m.promote);
 		result = turn(m.loc, m.origin);
 		history.add(m);
 		if(internboard.getPiece(m.loc) instanceof Pawn 

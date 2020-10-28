@@ -10,9 +10,9 @@ public abstract class Player implements Runnable {
 	public final Game board;
 	protected boolean myTurn;
 	//private boolean exists;
-	protected AlgebraicMove lastmove;
+	protected final AlgebraicMove lastmove;
 	protected AlgebraicMove ponder;
-	protected ChessClock time;
+	protected final ChessClock time;
 
 	public AlgebraicMove lastMove() {
 		return lastmove;

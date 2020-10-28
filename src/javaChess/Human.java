@@ -10,7 +10,7 @@ import vanillaChess.Game;
 
 public class Human extends Player {
 
-	ChessDisplay screen;
+	final ChessDisplay screen;
 	
 	public Human(boolean white, Game game, ChessClock time, Display s) {
 		super(white, game,time);
@@ -30,9 +30,8 @@ public class Human extends Player {
 	
 	@Override
 	AlgebraicMove onTurn() {
-		AlgebraicMove move = board.decode(screen.listenGame());
 		
-		return move;
+		return board.decode(screen.listenGame());
 	}
 
 	@Override

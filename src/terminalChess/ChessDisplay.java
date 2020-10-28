@@ -1,7 +1,6 @@
 package terminalChess;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -18,10 +17,10 @@ public class ChessDisplay {
 
 	private class ChessClock implements Runnable {
 		Thread clock;
-		String threadname;
+		final String name;
 
-		ChessClock(String name) {
-			threadname = name;
+		ChessClock() {
+			name = "clock";
 		}
 
 		public void run() {
@@ -38,13 +37,13 @@ public class ChessDisplay {
 
 		public void start() {
 			if (clock == null) {
-				clock = new Thread(this, threadname);
+				clock = new Thread(this, name);
 				clock.start();
 			}
 		}
 	}
 
-	ChessClock timer;
+	final ChessClock timer;
 	
 	boolean exists;
 	int sec;
@@ -56,19 +55,19 @@ public class ChessDisplay {
 	private TextColor foreground;
 	private TextColor background;
 	
-	ArrayList<String[]> history;
+	final ArrayList<String[]> history;
 	
 	private TerminalPosition boardPosition;
 	/*should just be a subclass, 
 	 * but for some reason it made
 	 *  new terminals, so this is
 	 *  now a box. Should debug later.*/
-	private Display chess;
+	private final Display chess;
 	
 	public ChessDisplay(Display c) {
 		exists = true;
-		timer = new ChessClock("clock");
-		history = new ArrayList<String[]>();
+		timer = new ChessClock();
+		history = new ArrayList<>();
 		File f = new File("colors.cfg");
 		chess = c;
 		if(!f.exists()) config();
@@ -123,7 +122,7 @@ public class ChessDisplay {
 	}
 
 	private TextColor[] configure(File f) {
-		ArrayList<Character> text = null;
+		ArrayList<Character> text;
 		text = FileRead.readFile(f);
 		int i = 0;
 		TextColor[] settings = new TextColor[6];
@@ -191,9 +190,9 @@ public class ChessDisplay {
 				}
 			} else {
 				if (!buffer.isEmpty()) {
-					int red = Integer.valueOf(buffer.substring(0, 3));
-					int blue = Integer.valueOf(buffer.substring(3, 6));
-					int green = Integer.valueOf(buffer.substring(6, 9));
+					int red = Integer.parseInt(buffer.substring(0, 3));
+					int blue = Integer.parseInt(buffer.substring(3, 6));
+					int green = Integer.parseInt(buffer.substring(6, 9));
 					settings[i] = new TextColor.RGB(red, blue, green);
 				}
 			}
@@ -201,10 +200,9 @@ public class ChessDisplay {
 		return settings;
 	}
 	
-	public char victoryScreen() throws FileNotFoundException, IOException {
+	public void victoryScreen() throws IOException {
 		chess.layers(GraphicsReader.readfiles("assets/victory"));
 		chess.screen.refresh();
-		return chess.screen.readInput().getCharacter();
 	}
 	
 	public void endClock() {
@@ -281,10 +279,7 @@ public class ChessDisplay {
 			try {
 				input = chess.screen.readInput();
 				if (input.getKeyType() == KeyType.Enter||input.getKeyType()==KeyType.Escape) {
-					if (move.length() == 6)
-						break;
-					else
-						move = "";
+					move = "";
 				}
 				if (input.getCharacter() == 'c' && input.isCtrlDown()) {
 					System.exit(0);
@@ -323,12 +318,6 @@ public class ChessDisplay {
 		return new TextCharacter(item, piece, tile);
 	}
 
-	public void refreshGame(char[][] board) throws IOException {
-		startGame(board);
-		drawMove("moves:       ");
-		chess.screen.refresh();
-	}
-
 	public void startGame(char[][] board)  {
 		chess.tGraphics.setForegroundColor(foreground);
 		chess.tGraphics.setBackgroundColor(background);
@@ -339,10 +328,6 @@ public class ChessDisplay {
 		drawHistory(moves);
 	}
 
-	public boolean resized() {
-		return chess.resized();
-	}
-	
 	public void turn(char[][] board, String move) throws IOException {
 		chess.screen.doResizeIfNecessary();
 		drawBoard(board);

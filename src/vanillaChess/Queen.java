@@ -11,7 +11,7 @@ public class Queen extends Piece {
 	}
 
 	private Integer[] bishop(LinBoard board, boolean forward, boolean polarity) {
-		ArrayList<Integer> moves = new ArrayList<Integer>();
+		ArrayList<Integer> moves = new ArrayList<>();
 
 		int increment = -1;
 		if (forward)
@@ -28,7 +28,7 @@ public class Queen extends Piece {
 			}
 
 		}
-		return moves.toArray(new Integer[moves.size()]);
+		return moves.toArray(new Integer[0]);
 	}
 
 	private Integer[] diag(int i, boolean opposite) {
@@ -55,7 +55,7 @@ public class Queen extends Piece {
 	}
 
 	private Integer[] rook(LinBoard board, boolean right, boolean rank) {
-		ArrayList<Integer> moves = new ArrayList<Integer>();
+		ArrayList<Integer> moves = new ArrayList<>();
 		int endpoint;
 		Integer[] direction = { 0, 0 };
 		if (rank) {
@@ -84,7 +84,7 @@ public class Queen extends Piece {
 				break;
 			}
 		}
-		return moves.toArray(new Integer[moves.size()]);
+		return moves.toArray(new Integer[0]);
 	}
 
 }

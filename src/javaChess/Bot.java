@@ -14,18 +14,22 @@ import vanillaChess.Game;
 public class Bot extends Player {
 
 	public static class UCIbot {
-		private class Setting {
-			UCITypes type;
-			String str;
-			int min;
-			int max;
-			String[] vars;
-			String name;
+		private static class Setting {
+			final UCITypes type;
+			final String str;
+			final int min;
+			final int max;
+			final String[] vars;
+			final String name;
 
 			// Constructs button
 			public Setting(String n) {
 				name = n;
 				type = UCITypes.button;
+				str = "";
+				min = -1;
+				max = -1;
+				vars = new String[]{};
 			}
 
 			// Constructs check (boolean)
@@ -33,6 +37,9 @@ public class Bot extends Player {
 				name = n;
 				type = UCITypes.check;
 				str = String.valueOf(b);
+				min = -1;
+				max = -1;
+				vars = new String[]{};
 			}
 
 			// Constructs spin
@@ -46,6 +53,7 @@ public class Bot extends Player {
 				} else {
 					throw new IndexOutOfBoundsException(v);
 				}
+				vars = new String[]{};
 			}
 
 			// Constructs string
@@ -53,6 +61,9 @@ public class Bot extends Player {
 				name = n;
 				type = UCITypes.string;
 				str = t;
+				min = -1;
+				max = -1;
+				vars = new String[]{};
 			}
 
 			// Constructs combo
@@ -61,6 +72,8 @@ public class Bot extends Player {
 				type = UCITypes.combo;
 				vars = v;
 				str = vars[i];
+			min = -1;
+			max = -1;
 			}
 
 			// Returns the command with a \n.
@@ -72,44 +85,10 @@ public class Bot extends Player {
 				return result;
 			}
 
-			// Updates values and does validation.
-			public void update(String s) {
-				switch(type) {
-				case button:
-					throw new IllegalCallerException("Buttons have no values to update");
-				case check:
-					str = String.valueOf(Boolean.valueOf(s));
-					break;
-				case combo:
-					boolean er = true;
-					for(String n : vars) {
-						if(n.equals(s)) {
-							er = false;
-							break;
-						}
-					}
-					if(!er) {
-						str = s;
-					}else {
-						throw new IllegalArgumentException("Not a valid value");
-					}
-					break;
-				case spin:
-					if(Integer.valueOf(s)>max||Integer.valueOf(s)<min) {
-						throw new IllegalArgumentException("Out of bounds");
-					}
-					str = s;
-					break;
-				case string:
-					str = s;
-					break;
-				}	
-			}
 		}
 		static final private String nl = System.lineSeparator();
 		private Process bot;
 		private InputStream out;
-		private OutputStream in;
 		private OutputStreamWriter write;
 		public String lastmove;
 		public String pondermove;
@@ -120,7 +99,7 @@ public class Bot extends Player {
 			try {
 				bot = Runtime.getRuntime().exec(path);
 				out = bot.getInputStream();
-				in = bot.getOutputStream();
+				OutputStream in = bot.getOutputStream();
 				write = new OutputStreamWriter(in);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -128,23 +107,7 @@ public class Bot extends Player {
 
 		}
 
-		//
-		public void changeSetting(String id, String value) throws IOException {
-			int index = 0;
-			for(Setting s : options) {
-				if(s.name.equals(id)) {
-					index = options.indexOf(s);
-					break;
-				}
-			}
-			options.get(index).update(value);
-			writeFlush(options.get(index).parse());
-			if(out.available() !=0) {
-				readAll();
-			}
-		}
-
-		public void close() throws IOException {
+		public void close() {
 			writeFlush("quit");
 			bot.destroy();
 		}
@@ -153,9 +116,9 @@ public class Bot extends Player {
 			readAll();
 			writeFlush("uci");
 			String buffer = readAll();
-			ArrayList<Integer> nameIndex = new ArrayList<Integer>();
-			ArrayList<Integer> typeIndex = new ArrayList<Integer>();
-			options = new ArrayList<Setting>();
+			ArrayList<Integer> nameIndex = new ArrayList<>();
+			ArrayList<Integer> typeIndex = new ArrayList<>();
+			options = new ArrayList<>();
 			int lastindex = 0;
 			do {
 				nameIndex.add(buffer.indexOf("option name", lastindex + 1));
@@ -173,7 +136,7 @@ public class Bot extends Player {
 				String name = buffer.substring(l + 12, typeIndex.get(nameIndex.indexOf(l)) - 1);
 				String type = FileRead.wordParse(buffer, l + 18 + name.length());
 				String def = FileRead.wordParse(buffer, l + 27 + type.length() + name.length());
-				ArrayList<String> variations = new ArrayList<String>();
+				ArrayList<String> variations = new ArrayList<>();
 				int st = l + 32 + type.length() + name.length() + def.length();
 				String var;
 				if (type.equals("combo")) {
@@ -198,76 +161,55 @@ public class Bot extends Player {
 					} while (true);
 				}
 				switch (parseType(type)) {
-				case check:
-					options.add(new Setting(name, Boolean.valueOf(def)));
-					break;
-				case spin:
-					options.add(new Setting(name, Integer.valueOf(variations.get(0)), Integer.valueOf(variations.get(1)),
-							Integer.valueOf(def)));
-					break;
-				case combo:
-					options.add(
-							new Setting(name, variations.toArray(new String[variations.size()]), variations.indexOf(def)));
-					break;
-				case button:
-					options.add(new Setting(name));
-					break;
-				case string:
-					options.add(new Setting(name, def));
+					case check -> options.add(new Setting(name, Boolean.parseBoolean(def)));
+					case spin -> options.add(new Setting(name, Integer.parseInt(variations.get(0)), Integer.parseInt(variations.get(1)),
+							Integer.parseInt(def)));
+					case combo -> options.add(
+							new Setting(name, variations.toArray(new String[0]), variations.indexOf(def)));
+					case button -> options.add(new Setting(name));
+					case string -> options.add(new Setting(name, def));
 				}
 			}
 		}
 
 		private UCITypes parseType(String s) {
-			switch (s.toLowerCase()) {
-			case "check":
-				return UCITypes.check;
-			case "button":
-				return UCITypes.button;
-			case "combo":
-				return UCITypes.combo;
-			case "spin":
-				return UCITypes.spin;
-			case "string":
-				return UCITypes.string;
-			}
-			return null;
+			return switch (s.toLowerCase()) {
+				case "check" -> UCITypes.check;
+				case "button" -> UCITypes.button;
+				case "combo" -> UCITypes.combo;
+				case "spin" -> UCITypes.spin;
+				case "string" -> UCITypes.string;
+				default -> null;
+			};
 		}
 
-		public void position(String fen) throws IOException {
+		public void position(String fen) {
 			writeFlush("position fen" + fen);
-		}
-
-		public void position(String fen, AlgebraicMove[] moves) throws IOException {
-			String move = "";
-			for(AlgebraicMove m: moves) {
-				move += m.toString() + " ";
-			}
-			writeFlush("position fen" + fen + " moves" + move);
 		}
 
 		public void search(int wTime, int bTime) throws IOException {
 			writeFlush("go wtime " + wTime + " " + "btime" + bTime);
-			String ind = until("bestmove ");
+			String ind = until(out);
 			String answer = ind + readAll();
 			lastmove = answer.substring(9, answer.indexOf("ponder "));
 			pondermove = answer.substring(answer.indexOf("ponder ") + 7);
 		}
 		
 		public void search(int sec) throws IOException {
+			out.readAllBytes();
 			writeFlush("go movetime " + sec);
-			String ind = until("bestmove ");
+			String ind = until(out);
 			String answer = ind + readAll();
 			lastmove = answer.substring(9, answer.indexOf("ponder "));
 			pondermove = answer.substring(answer.indexOf("ponder ") + 7);
 		}
 		
-		private String until(String target) throws IOException {
+		private static String until(InputStream out) throws IOException {
 			String str = "";
 			int index = -1;
 			while (index == -1) {
 				str = str.concat(String.valueOf((char) out.read()));
-				index = str.indexOf(target);
+				index = str.indexOf("bestmove ");
 			}
 			return str.substring(index);
 		}
@@ -291,11 +233,16 @@ public class Bot extends Player {
 
 	}
 
-	UCIbot bot;
+	final UCIbot bot;
 
 	public Bot(boolean white, Game game, ChessClock t, String path) {
 		super(white, game, t);
 		bot = new UCIbot(path);
+		try {
+			bot.init();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -314,7 +261,6 @@ public class Bot extends Player {
 
 	@Override
 	AlgebraicMove offTurn() {
-		//bot.
 		return new AlgebraicMove();
 	}
 
@@ -332,30 +278,18 @@ public class Bot extends Player {
 
 	@Override
 	void victoryScreen() {
-		try {
-			bot.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		bot.close();
 	}
 
 	@Override
 	void lossScreen() {
-		try {
-			bot.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		bot.close();
 	}
 
 
 	@Override
 	void updateScreen(AlgebraicMove m) {
-		try {
-			bot.position(board.getFen());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		bot.position(board.getFen());
 	}
 
 	@Override

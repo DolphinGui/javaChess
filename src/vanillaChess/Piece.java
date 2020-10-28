@@ -6,11 +6,11 @@ import miscFunct.ArrayMan;
 
 public class Piece {
 	protected int location;
-	protected String name;
-	protected char shorthand;
-	protected boolean isFirst = true;
+	protected final String name;
+	protected final char shorthand;
+	protected boolean isFirst;
 	protected boolean hasMoved = false;
-	Integer[][] moves = {};
+	final Integer[][] moves = {};
 
 	public void moved() {
 		hasMoved = true;
@@ -68,11 +68,11 @@ public class Piece {
 	}
 
 	private Integer[] validator(LinBoard board) {
-		ArrayList<Integer> results = new ArrayList<Integer>();
+		ArrayList<Integer> results = new ArrayList<>();
 		for (Integer[] move : moves) {
 			if (board.checkFealty(board.vecToInteger(move), isFirst))
 				results.add(board.vecToInteger(move));
 		}
-		return results.toArray(new Integer[results.size()]);
+		return results.toArray(new Integer[0]);
 	}
 }

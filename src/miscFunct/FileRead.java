@@ -29,7 +29,7 @@ public class FileRead {
 
 	private static ArrayList<Character> handleCharacters(Reader reader) {
 		int r;
-		ArrayList<Character> result = new ArrayList<Character>();
+		ArrayList<Character> result = new ArrayList<>();
 		try {
 			while ((r = reader.read()) != -1) {
 				char ch = (char) r;

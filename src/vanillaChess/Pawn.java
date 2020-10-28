@@ -9,7 +9,7 @@ public class Pawn extends Piece {
 	private final static char shorthand = 'p';
 	private boolean hasMoved = false;
 	private boolean passant = false;
-	private int initialLoc;
+	private final int initialLoc;
 
 	public Pawn(int loc, boolean fealty) {
 		super(loc, fealty, "Pawn", 'p');
@@ -21,11 +21,9 @@ public class Pawn extends Piece {
 		if (!isFirst)
 			direction[1] = -1;
 		if (board.getPiece(direction, board.locToVec(location)) == null) {
-			Integer[] results = { location + board.vecToInteger(direction) };
-			return results;
+			return new Integer[]{ location + board.vecToInteger(direction) };
 		}
-		Integer[] results = {};
-		return results;
+		return new Integer[]{};
 	}
 
 	private Integer[] capture(LinBoard board) {
@@ -36,7 +34,7 @@ public class Pawn extends Piece {
 			east[1] = -1;
 		}
 
-		ArrayList<Integer> validX = new ArrayList<Integer>();
+		ArrayList<Integer> validX = new ArrayList<>();
 		if (board.checkFealty(location + board.vecToInteger(west), isFirst)
 				&& board.getPiece(location + board.vecToInteger(west)) != null) {
 			validX.add(board.vecToInteger(west) + location);
@@ -46,7 +44,7 @@ public class Pawn extends Piece {
 			validX.add(board.vecToInteger(east) + location);
 
 		}
-		return validX.toArray(new Integer[validX.size()]);
+		return validX.toArray(new Integer[0]);
 	}
 
 	public Integer[] exception(LinBoard board) {

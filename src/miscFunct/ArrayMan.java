@@ -19,9 +19,11 @@ public class ArrayMan {
 		return result;
 	}
 
-	public static <T> T[] append(T[] array, T addition) {
-		T[] result = Arrays.copyOf(array, array.length + 1);
-		result[result.length] = addition;
-		return result;
-	}
+// --Commented out by Inspection START (28-Oct-20 15:19):
+//	public static <T> T[] append(T[] array, T addition) {
+//		T[] result = Arrays.copyOf(array, array.length + 1);
+//		result[result.length] = addition;
+//		return result;
+//	}
+// --Commented out by Inspection STOP (28-Oct-20 15:19)
 }

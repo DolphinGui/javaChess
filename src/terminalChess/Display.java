@@ -1,8 +1,5 @@
 package terminalChess;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.BasicTextImage;
@@ -12,6 +9,8 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.SimpleTerminalResizeListener;
 import com.googlecode.lanterna.terminal.Terminal;
+
+import java.io.IOException;
 
 /**
  * @author Shin TODO:
@@ -63,6 +62,7 @@ public class Display {
 	SimpleTerminalResizeListener resizeListener;
 
 
+
 	public Display() throws IOException {
 		terminal = new DefaultTerminalFactory().createTerminal();
 		screen = new TerminalScreen(terminal);
@@ -74,25 +74,28 @@ public class Display {
 		resizeListener.isTerminalResized();
 	}
 
-	public void close() throws IOException {
-		screen.close();
-		terminal.close();
-		System.exit(0);
-	}
+// --Commented out by Inspection START (28-Oct-20 15:20):
+//	public void close() throws IOException {
+//		screen.close();
+//		terminal.close();
+//		System.exit(0);
+//	}
+// --Commented out by Inspection STOP (28-Oct-20 15:20)
 
 	public void destroy() throws IOException {
 		screen.close();
 		terminal.close();
 	}
 
-	public char initStart() throws FileNotFoundException, IOException {
-		layers(GraphicsReader.readfiles("assets/start"));
-		screen.refresh();
-		return screen.readInput().getCharacter();
-	}
 
 	public boolean resized() {
 		return resizeListener.isTerminalResized();
+	}
+
+	public char initStart() throws IOException {
+		layers(GraphicsReader.readfiles("assets/start"));
+		screen.refresh();
+		return screen.readInput().getCharacter();
 	}
 
 }

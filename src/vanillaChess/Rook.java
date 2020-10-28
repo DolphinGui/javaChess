@@ -35,7 +35,7 @@ public class Rook extends Piece {
 	}
 
 	private Integer[] move(LinBoard board, boolean right, boolean rank) {
-		ArrayList<Integer> moves = new ArrayList<Integer>();
+		ArrayList<Integer> moves = new ArrayList<>();
 		int endpoint;
 		Integer[] direction = { 0, 0 };
 		if (rank) {
@@ -65,7 +65,7 @@ public class Rook extends Piece {
 				break;
 			}
 		}
-		return moves.toArray(new Integer[moves.size()]);
+		return moves.toArray(new Integer[0]);
 	}
 
 }

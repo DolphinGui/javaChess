@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class LinBoard {
 	private Piece[] board;
-	private int ranks; // height, rows
-	private int files; // width, columns
+	private final int ranks; // height, rows
+	private final int files; // width, columns
 
 	public LinBoard(int rank, int file) {
 		if (rank == 0 || file == 0)
@@ -22,7 +22,7 @@ public class LinBoard {
 	}
 
 	public String toFen() {
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		int nCount = 0;
 		for(int x = ranks-1; x >=0; x--) {
 			for(int y = 0; y < files; y++) {
@@ -31,19 +31,19 @@ public class LinBoard {
 					nCount++;
 				}else {
 					if(nCount!=0) {
-						result += nCount;
+						result.append(nCount);
 						nCount = 0;
 					}
-					if(p.isFirst) result += Character.toString(Character.toUpperCase(p.shorthand));
-					else result +=Character.toString(p.shorthand);
+					if(p.isFirst) result.append(Character.toUpperCase(p.shorthand));
+					else result.append(p.shorthand);
 
 				}
 			}
 			if(nCount!=0) {
-				result += nCount;
+				result.append(nCount);
 				nCount = 0;
 			}
-			result+="/";
+			result.append("/");
 		}
 		return result.substring(0, result.length()-1);
 	}
@@ -111,22 +111,22 @@ public class LinBoard {
 	}
 
 	public Piece[] getPieces() {
-		ArrayList<Piece> results = new ArrayList<Piece>();
+		ArrayList<Piece> results = new ArrayList<>();
 		for (Piece p : board) {
 			if (p != null)
 				results.add(p);
 		}
-		return results.toArray(new Piece[results.size()]);
+		return results.toArray(new Piece[0]);
 	}
 
 	public Piece[] getPieces(boolean fealty) {
-		ArrayList<Piece> results = new ArrayList<Piece>();
+		ArrayList<Piece> results = new ArrayList<>();
 		for (Piece p : board) {
 			if (p != null)
 				if (p.getFealty() == fealty)
 					results.add(p);
 		}
-		return results.toArray(new Piece[results.size()]);
+		return results.toArray(new Piece[0]);
 	}
 
 	public int getWidth() {
@@ -136,25 +136,19 @@ public class LinBoard {
 	public boolean inBounds(int loc) {
 		if (loc >= this.board.length)
 			return false;
-		if (loc < 0)
-			return false;
-		return true;
+		return loc >= 0;
 	}
 
 	public boolean inBounds(Integer[] location) {
 		if (location[0] >= files)
 			return false;
-		if (location[1] >= ranks)
-			return false;
-		return true;
+		return location[1] < ranks;
 	}
 
 	public boolean inBounds(Integer[] location, Integer[] vector) {
 		if (location[0] + vector[0] >= files || location[0] + vector[0] < 0)
 			return false;
-		if (location[1] + vector[1] >= ranks || location[1] + vector[1] < 0)
-			return false;
-		return true;
+		return location[1] + vector[1] < ranks && location[1] + vector[1] >= 0;
 	}
 
 	public Integer[] locToVec(int loc) {

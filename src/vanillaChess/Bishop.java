@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import miscFunct.ArrayMan;
 
 public class Bishop extends Piece {
-	public static final Integer[] move = {};
+	// --Commented out by Inspection (28-Oct-20 15:20):public static final Integer[] move = {};
 
 	private final static String name = "Bishop";
 
@@ -40,7 +40,7 @@ public class Bishop extends Piece {
 	}
 
 	private Integer[] move(LinBoard board, boolean forward, boolean polarity) {
-		ArrayList<Integer> moves = new ArrayList<Integer>();
+		ArrayList<Integer> moves = new ArrayList<>();
 
 		int increment = -1;
 		if (forward)
@@ -57,6 +57,6 @@ public class Bishop extends Piece {
 			}
 
 		}
-		return moves.toArray(new Integer[moves.size()]);
+		return moves.toArray(new Integer[0]);
 	}
 }

@@ -11,12 +11,12 @@ public class GraphicsReader {
 
 	private static String[] load(File f) throws FileNotFoundException {
 		Scanner layer = new Scanner(f);
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		while (layer.hasNextLine()) {
 			result.add(layer.nextLine());
 		}
 		layer.close();
-		return result.toArray(new String[result.size()]);
+		return result.toArray(new String[0]);
 	}
 
 	/* This reads layer files and loads them into an array of string arrays. */
@@ -24,16 +24,13 @@ public class GraphicsReader {
 		File l = new File(dir);
 		if (!l.exists())
 			throw new FileNotFoundException();
-		FileFilter hidden = new FileFilter() {
-			public boolean accept(File f) {
-				return !f.isHidden();
-			}
-		};
+		FileFilter hidden = f -> !f.isHidden();
 		File[] layerDir = l.listFiles(hidden);
 
+		assert layerDir != null;
 		Arrays.sort(layerDir);
 
-		ArrayList<String[]> results = new ArrayList<String[]>();
+		ArrayList<String[]> results = new ArrayList<>();
 
 		for (File f : layerDir) {
 			results.add(load(f));

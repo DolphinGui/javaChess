@@ -8,10 +8,11 @@ import vanillaChess.Game;
 import vanillaChess.InvalidMoveException;
 
 public class Session {
+	@SuppressWarnings("BusyWait")
 	public static class ChessClock implements Runnable{
 		private boolean exists;
-		private Player player1;
-		private Player player2;
+		private final Player player1;
+		private final Player player2;
 		private boolean isWhite;
 		private int wTime;
 		private int bTime;
@@ -60,10 +61,10 @@ public class Session {
 
 	Player black;
 	Player white;
-	Game board;
+	final Game board;
 	ChessClock time;
 
-	public Session(Display db, Display dw) throws FileNotFoundException {
+	public Session(Display db, Display dw) {
 		board = new Game();
 		board.init();
 		time = new ChessClock(white, black, -1, -1);
@@ -71,7 +72,7 @@ public class Session {
 		white = new Human(true, board, time, dw);
 	}
 
-	public Session(Display db, Display dw, int b, int w) throws FileNotFoundException {
+	public Session(Display db, Display dw, int b, int w) {
 		board = new Game();
 		board.init();
 		time = new ChessClock(white, black, w, b);
@@ -79,7 +80,7 @@ public class Session {
 		white = new Human(true, board, time, dw);
 	}
 
-	public Session(Display d, int b, int w, boolean isHumanWhite, String botPath) throws FileNotFoundException {
+	public Session(Display d, int b, int w, boolean isHumanWhite, String botPath) {
 		board = new Game();
 		board.init();
 		time = new ChessClock(white, black, w, b);
@@ -91,7 +92,7 @@ public class Session {
 			black = new Human(true, board, time, d);
 		}
 	}
-	public Session(Display d, boolean isHumanWhite, String botPath) throws FileNotFoundException {
+	public Session(Display d, boolean isHumanWhite, String botPath) {
 		board = new Game();
 		board.init();
 		time = new ChessClock(white, black, -1, -1);
