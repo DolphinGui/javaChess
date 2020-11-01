@@ -8,7 +8,7 @@ public class Piece {
 	protected int location;
 	protected final String name;
 	protected final char shorthand;
-	protected boolean isFirst;
+	protected final boolean isFirst;
 	protected boolean hasMoved = false;
 	final Integer[][] moves = {};
 

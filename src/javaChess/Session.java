@@ -1,7 +1,5 @@
 package javaChess;
 
-import java.io.FileNotFoundException;
-
 import terminalChess.Display;
 import vanillaChess.AlgebraicMove;
 import vanillaChess.Game;
@@ -59,31 +57,30 @@ public class Session {
 
 	}
 
-	Player black;
-	Player white;
+	final Player black;
+	final Player white;
 	final Game board;
 	ChessClock time;
 
 	public Session(Display db, Display dw) {
-		board = new Game();
-		board.init();
-		time = new ChessClock(white, black, -1, -1);
-		black = new Human(false, board, time, db);
-		white = new Human(true, board, time, dw);
+		this(db, dw, -1, -1);
 	}
 
 	public Session(Display db, Display dw, int b, int w) {
 		board = new Game();
 		board.init();
-		time = new ChessClock(white, black, w, b);
 		black = new Human(false, board, time, db);
 		white = new Human(true, board, time, dw);
+		time = new ChessClock(white, black, w, b);
+	}
+
+	public Session(Display d, boolean isHumanWhite, String botPath){
+		this(d, -1, -1, isHumanWhite, botPath);
 	}
 
 	public Session(Display d, int b, int w, boolean isHumanWhite, String botPath) {
 		board = new Game();
 		board.init();
-		time = new ChessClock(white, black, w, b);
 		if(isHumanWhite) {
 			black = new Bot(false,board, time, botPath);
 			white = new Human(true, board, time,  d);
@@ -91,20 +88,11 @@ public class Session {
 			white = new Bot(false,board, time, botPath);
 			black = new Human(true, board, time, d);
 		}
+		time = new ChessClock(white, black, w, b);
 	}
-	public Session(Display d, boolean isHumanWhite, String botPath) {
-		board = new Game();
-		board.init();
-		time = new ChessClock(white, black, -1, -1);
-		if(isHumanWhite) {
-			black = new Bot(false,board, time, botPath);
-			white = new Human(true, board, time, d);
-		}else {
-			white = new Bot(false,board, time, botPath);
-			black = new Human(true, board, time, d);
-		}
-	}
-	
+
+
+
 	public void play() {
 		boolean exists = true;
 		boolean whiteTurn = true;

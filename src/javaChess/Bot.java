@@ -195,9 +195,8 @@ public class Bot extends Player {
 			pondermove = answer.substring(answer.indexOf("ponder ") + 7);
 		}
 		
-		public void search(int sec) throws IOException {
-			out.readAllBytes();
-			writeFlush("go movetime " + sec);
+		public void search(int millisecond) throws IOException {
+			writeFlush("go movetime " + millisecond);
 			String ind = until(out);
 			String answer = ind + readAll();
 			lastmove = answer.substring(9, answer.indexOf("ponder "));
@@ -234,6 +233,7 @@ public class Bot extends Player {
 	}
 
 	final UCIbot bot;
+
 
 	public Bot(boolean white, Game game, ChessClock t, String path) {
 		super(white, game, t);

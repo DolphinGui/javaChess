@@ -1,5 +1,6 @@
 package javaChess;
 
+import java.io.File;
 import java.io.IOException;
 
 import terminalChess.Display;
@@ -23,7 +24,11 @@ public class JChess {
 					game.play();
 				}
 				case 'b' -> {
-					game = new Session(screen, true, "assets/stockfish_20090216_x64_bmi2.exe");
+
+					game = new Session(screen, true, screen.findFile(
+							new File("assets/"),
+							"Choose bot binary",
+							(File f)-> f.canExecute()||!f.isHidden()).getPath());
 					game.play();
 				}
 			}
