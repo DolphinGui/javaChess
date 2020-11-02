@@ -12,7 +12,7 @@ public abstract class Player implements Runnable {
 	//private boolean exists;
 	protected final AlgebraicMove lastmove;
 	protected AlgebraicMove ponder;
-	protected final ChessClock time;
+	protected ChessClock time;
 
 	public AlgebraicMove lastMove() {
 		return lastmove;
@@ -22,13 +22,16 @@ public abstract class Player implements Runnable {
 		return ponder;
 	}
 	
-	public Player(boolean white, Game game, ChessClock c) {
+	public Player(boolean white, Game game) {
 		isWhite = white;
 		board = game;
 		myTurn = white;
-		time = c;
 		ponder = new AlgebraicMove();
 		lastmove = new AlgebraicMove();
+	}
+
+	public void setClock(ChessClock c){
+		time = c;
 	}
 
 	public boolean turn() {

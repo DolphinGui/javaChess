@@ -12,8 +12,8 @@ public class Human extends Player {
 
 	final ChessDisplay screen;
 	
-	public Human(boolean white, Game game, ChessClock time, Display s) {
-		super(white, game,time);
+	public Human(boolean white, Game game, Display s) {
+		super(white, game);
 		screen = new ChessDisplay(s);
 		screen.initGame(game.getCharBoard());
 	}

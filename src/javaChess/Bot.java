@@ -90,8 +90,8 @@ public class Bot extends Player {
 		private Process bot;
 		private InputStream out;
 		private OutputStreamWriter write;
-		public String lastmove;
-		public String pondermove;
+		private String lastmove;
+		private String pondermove;
 
 		ArrayList<Setting> options;
 
@@ -184,7 +184,7 @@ public class Bot extends Player {
 		}
 
 		public void position(String fen) {
-			writeFlush("position fen" + fen);
+			writeFlush("position fen " + fen);
 		}
 
 		public void search(int wTime, int bTime) throws IOException {
@@ -204,10 +204,10 @@ public class Bot extends Player {
 		}
 		
 		private static String until(InputStream out) throws IOException {
-			String str = "";
+			StringBuilder str = new StringBuilder();
 			int index = -1;
 			while (index == -1) {
-				str = str.concat(String.valueOf((char) out.read()));
+				str.append((char)out.read());
 				index = str.indexOf("bestmove ");
 			}
 			return str.substring(index);
@@ -235,8 +235,8 @@ public class Bot extends Player {
 	final UCIbot bot;
 
 
-	public Bot(boolean white, Game game, ChessClock t, String path) {
-		super(white, game, t);
+	public Bot(boolean white, Game game, String path) {
+		super(white, game);
 		bot = new UCIbot(path);
 		try {
 			bot.init();

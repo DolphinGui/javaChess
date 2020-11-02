@@ -1,4 +1,7 @@
 # README
+This is my terminal chess program. It uses the lanterna java library.
+It uses binaries for chess engines for bot matches.
+
 
 ## Abnormal exit codes:
 Exit codes by error type:

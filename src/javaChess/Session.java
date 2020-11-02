@@ -21,7 +21,8 @@ public class Session {
 			bTime = b;
 			isWhite = true;
 		}
-		
+
+
 		public int time(boolean color) {
 			if(color) return wTime;
 			return bTime;
@@ -69,9 +70,11 @@ public class Session {
 	public Session(Display db, Display dw, int b, int w) {
 		board = new Game();
 		board.init();
-		black = new Human(false, board, time, db);
-		white = new Human(true, board, time, dw);
+		black = new Human(false, board, db);
+		white = new Human(true, board, dw);
 		time = new ChessClock(white, black, w, b);
+		black.setClock(time);
+		white.setClock(time);
 	}
 
 	public Session(Display d, boolean isHumanWhite, String botPath){
@@ -82,13 +85,15 @@ public class Session {
 		board = new Game();
 		board.init();
 		if(isHumanWhite) {
-			black = new Bot(false,board, time, botPath);
-			white = new Human(true, board, time,  d);
+			black = new Bot(false,board, botPath);
+			white = new Human(true, board, d);
 		}else {
-			white = new Bot(false,board, time, botPath);
-			black = new Human(true, board, time, d);
+			white = new Bot(false,board, botPath);
+			black = new Human(true, board, d);
 		}
 		time = new ChessClock(white, black, w, b);
+		black.setClock(time);
+		white.setClock(time);
 	}
 
 
