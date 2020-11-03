@@ -154,7 +154,7 @@ public class Display {
 
 
 	public char initStart() throws IOException {
-		layers(GraphicsReader.readfiles("assets/start"));
+		layers(GraphicsReader.readFiles("assets/start"));
 		screen.refresh();
 		return screen.readInput().getCharacter();
 	}

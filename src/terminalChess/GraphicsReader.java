@@ -19,8 +19,8 @@ public class GraphicsReader {
 		return result.toArray(new String[0]);
 	}
 
-	/* This reads layer files and loads them into an array of string arrays. */
-	public static String[][] readfiles(String dir) throws FileNotFoundException {
+	/** This reads a directory of text files and loads them into an array of string arrays. */
+	public static String[][] readFiles(String dir) throws FileNotFoundException {
 		File l = new File(dir);
 		if (!l.exists())
 			throw new FileNotFoundException();

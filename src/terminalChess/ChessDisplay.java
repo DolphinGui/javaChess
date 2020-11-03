@@ -200,7 +200,7 @@ public class ChessDisplay {
 	}
 
 	public void victoryScreen() throws IOException {
-		chess.layers(GraphicsReader.readfiles("assets/victory"));
+		chess.layers(GraphicsReader.readFiles("assets/victory"));
 		chess.screen.refresh();
 	}
 
