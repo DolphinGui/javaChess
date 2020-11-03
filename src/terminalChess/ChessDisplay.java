@@ -10,7 +10,6 @@ import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.BasicTextImage;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 import miscFunct.FileRead;
 
 public class ChessDisplay {
@@ -26,7 +25,7 @@ public class ChessDisplay {
 		public void run() {
 			while (exists) {
 				try {
-					drawTime(sec);
+					drawTime();
 					sec++;
 					TimeUnit.SECONDS.sleep(1);
 				} catch (InterruptedException e) {
@@ -44,26 +43,26 @@ public class ChessDisplay {
 	}
 
 	final ChessClock timer;
-	
+
 	boolean exists;
 	int sec;
-	
+
 	private TextColor whiteTileColor;
 	private TextColor whitePieceColor;
 	private TextColor blackPieceColor;
 	private TextColor blackTileColor;
 	private TextColor foreground;
 	private TextColor background;
-	
+
 	final ArrayList<String[]> history;
-	
+
 	private TerminalPosition boardPosition;
-	/*should just be a subclass, 
+	/*should just be a subclass,
 	 * but for some reason it made
 	 *  new terminals, so this is
 	 *  now a box. Should debug later.*/
 	private final Display chess;
-	
+
 	public ChessDisplay(Display c) {
 		exists = true;
 		timer = new ChessClock();
@@ -73,8 +72,8 @@ public class ChessDisplay {
 		if(!f.exists()) config();
 		else config(configure(f));
 	}
-	
-	
+
+
 	private BasicTextImage boardSet(char[][] board) {
 		BasicTextImage result = new BasicTextImage(board.length * 3 + 1, board[0].length + 1);
 		boolean isWhite = false;
@@ -199,16 +198,16 @@ public class ChessDisplay {
 		}
 		return settings;
 	}
-	
+
 	public void victoryScreen() throws IOException {
 		chess.layers(GraphicsReader.readfiles("assets/victory"));
 		chess.screen.refresh();
 	}
-	
+
 	public void endClock() {
 		exists = false;
 	}
-	
+
 	private void drawBoard(char[][] board) {
 		BasicTextImage boardImage = boardSet(board);
 		chess.tGraphics.drawImage(boardPosition, boardImage);
@@ -229,7 +228,7 @@ public class ChessDisplay {
 			}
 		}
 	}
-	
+
 	private void drawMove(String move) {
 		chess.tGraphics.putString(40, 15, move);
 		try {
@@ -239,11 +238,8 @@ public class ChessDisplay {
 		}
 	}
 
-	private void drawTime(int seconds) {
-		chess.tGraphics.putString(47, 4, Integer.toString(seconds % 10));
-		chess.tGraphics.putString(46, 4, Integer.toString((seconds / 10) % 6));
-		chess.tGraphics.putString(44, 4, Integer.toString((seconds / 60) % 10));
-		chess.tGraphics.putString(43, 4, Integer.toString((seconds / 600)));
+	private void drawTime() {
+		chess.tGraphics.putString(44, 4, String.format("%d:%02d", sec / 60, sec));
 		try {
 			chess.screen.refresh();
 		} catch (IOException e) {
@@ -257,13 +253,14 @@ public class ChessDisplay {
 		}
 		chess.tGraphics.putString(40, 16, message);
 	}
-	
+
 
 	public void initGame(char[][] board) {
 		startGame(board);
 		timer.start();
 		chess.resizeListener.onResized(chess.terminal, null);
 		try {
+			chess.terminal.setCursorVisible(false);
 			chess.screen.refresh();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -278,30 +275,35 @@ public class ChessDisplay {
 			KeyStroke input;
 			try {
 				input = chess.screen.readInput();
-				if (input.getKeyType() == KeyType.Enter||input.getKeyType()==KeyType.Escape) {
-					move = "";
-				}
-				if (input.getCharacter() == 'c' && input.isCtrlDown()) {
-					System.exit(0);
-				}
-				if(input.getKeyType()==KeyType.Backspace && move.length()!=0) {
-					move = move.substring(0, move.length()-1);
-					drawMove("moves:       ");
-				}else if(input.getKeyType()==KeyType.Character){
-					move = move.concat(Character.toString(input.getCharacter()));
+				switch(input.getKeyType()){
+					case Enter, Escape-> move = "";
+					case Character -> {
+						if (input.getCharacter() == 'c' && input.isCtrlDown()) {
+							System.exit(0);
+						}else{
+							move = move.concat(Character.toString(input.getCharacter()));
+						}
+					}
+					case Backspace -> {
+						if(move.length()!=0){
+							move = move.substring(0, move.length()-1);
+							drawMove("moves:       ");
+						}
+					}
+
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			drawMove(display.concat(move));
 		}
 		move = move.substring(0, 5);
 		return move;
 	}
 
-	
-	
+
+
 	private TextCharacter pieceFactory(char item, boolean pieceWhite, boolean tileWhite) {
 		TextColor piece;
 		TextColor tile;
@@ -324,15 +326,13 @@ public class ChessDisplay {
 		chess.screen.clear();
 		String[][] moves = {};
 		drawBoard(board);
-		chess.tGraphics.putString(43, 4, "00:00");
 		drawHistory(moves);
 	}
 
 	public void turn(char[][] board, String move) throws IOException {
 		chess.screen.doResizeIfNecessary();
 		drawBoard(board);
-		String[] addition = { move, String.format("%d:%02d", sec / 60, sec) };
-		history.add(addition);
+		history.add(new String[] { move, String.format("%d:%02d", sec / 60, sec) });
 		drawHistory(history);
 		chess.screen.refresh();
 	}
