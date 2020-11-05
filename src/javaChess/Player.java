@@ -2,35 +2,34 @@ package javaChess;
 
 
 import javaChess.Session.ChessClock;
-import vanillaChess.AlgebraicMove;
-import vanillaChess.Game;
 
-public abstract class Player implements Runnable {
+public abstract class Player<T extends Move> implements Runnable {
 	public final boolean isWhite;
-	public final Game board;
+	public final Game<T> board;
 	protected boolean myTurn;
 	//private boolean exists;
-	protected final AlgebraicMove lastmove;
-	protected AlgebraicMove ponder;
-	protected ChessClock time;
+	protected final T lastmove;
+	protected T ponder;
+	protected ChessClock<T> time;
 
-	public AlgebraicMove lastMove() {
+	public T lastMove() {
 		return lastmove;
 	}
 	
-	public AlgebraicMove pondermove() {
+	public T pondermove() {
 		return ponder;
 	}
 	
-	public Player(boolean white, Game game) {
+	@SuppressWarnings("unchecked")
+	public Player(boolean white, Game<T> game) {
 		isWhite = white;
 		board = game;
 		myTurn = white;
-		ponder = new AlgebraicMove();
-		lastmove = new AlgebraicMove();
+		ponder = (T) new Move();
+		lastmove = (T) new Move();
 	}
 
-	public void setClock(ChessClock c){
+	public void setClock(ChessClock<T> c){
 		time = c;
 	}
 
@@ -50,16 +49,16 @@ public abstract class Player implements Runnable {
 	public abstract void error(String s);
 	
 	//what it does on its turn, like thinking
-	abstract AlgebraicMove onTurn();
+	abstract T onTurn();
  
 	//what it does off its turn, like pondering.
-	abstract AlgebraicMove offTurn();
+	abstract T offTurn();
 
 	abstract void stopPonder();
 	abstract void ponderhit();
 	abstract void victoryScreen();
 	abstract void lossScreen();
-	abstract void updateScreen(AlgebraicMove m);
+	abstract void updateScreen(T m);
 	
 	public void switchTurns() {
 		myTurn = !myTurn;

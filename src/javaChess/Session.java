@@ -1,20 +1,17 @@
 package javaChess;
 
 import terminalChess.Display;
-import vanillaChess.AlgebraicMove;
-import vanillaChess.Game;
-import vanillaChess.InvalidMoveException;
 
-public class Session {
+public class Session<T extends Move> {
 	@SuppressWarnings("BusyWait")
-	public static class ChessClock implements Runnable{
+	public static class ChessClock<T extends Move> implements Runnable{
 		private boolean exists;
-		private final Player player1;
-		private final Player player2;
+		private final Player<T> player1;
+		private final Player<T> player2;
 		private boolean isWhite;
 		private int wTime;
 		private int bTime;
-		public ChessClock(Player p1, Player p2, int w, int b) {
+		public ChessClock(Player<T> p1, Player<T> p2, int w, int b) {
 			player1 = p1;
 			player2 = p2;
 			wTime = w;
@@ -58,40 +55,40 @@ public class Session {
 
 	}
 
-	final Player black;
-	final Player white;
-	final Game board;
-	ChessClock time;
+	final Player<T> black;
+	final Player<T> white;
+	final Game<T> board;
+	final ChessClock<T> time;
 
-	public Session(Display db, Display dw) {
-		this(db, dw, -1, -1);
+	public Session(Display db, Display dw, Game<T> g) {
+		this(db, dw, -1, -1, g);
 	}
 
-	public Session(Display db, Display dw, int b, int w) {
-		board = new Game();
+	public Session(Display db, Display dw, int b, int w, Game<T> g) {
+		board = g;
 		board.init();
-		black = new Human(false, board, db);
-		white = new Human(true, board, dw);
-		time = new ChessClock(white, black, w, b);
+		black = new Human<>(false, board, db);
+		white = new Human<>(true, board, dw);
+		time = new ChessClock<>(white, black, w, b);
 		black.setClock(time);
 		white.setClock(time);
 	}
 
-	public Session(Display d, boolean isHumanWhite, String botPath){
-		this(d, -1, -1, isHumanWhite, botPath);
+	public Session(Display d, boolean isHumanWhite, String botPath, Game<T> g){
+		this(d, -1, -1, isHumanWhite, botPath, g);
 	}
 
-	public Session(Display d, int b, int w, boolean isHumanWhite, String botPath) {
-		board = new Game();
+	public Session(Display d, int b, int w, boolean isHumanWhite, String botPath, Game<T> g) {
+		board = g;
 		board.init();
 		if(isHumanWhite) {
-			black = new Bot(false,board, botPath);
-			white = new Human(true, board, d);
+			black = new Bot<>(false,board, botPath);
+			white = new Human<>(true, board, d);
 		}else {
-			white = new Bot(false,board, botPath);
-			black = new Human(true, board, d);
+			white = new Bot<>(false,board, botPath);
+			black = new Human<>(true, board, d);
 		}
-		time = new ChessClock(white, black, w, b);
+		time = new ChessClock<>(white, black, w, b);
 		black.setClock(time);
 		white.setClock(time);
 	}
@@ -107,7 +104,7 @@ public class Session {
 		do {
 			//wThread.start();
 			//bThread.start();
-			AlgebraicMove move;
+			T move;
 			if(whiteTurn) {
 				move = white.onTurn();
 			}else {
@@ -115,7 +112,7 @@ public class Session {
 			}
 			white.stopPonder();
 			black.stopPonder();
-			AlgebraicMove ponder = black.pondermove();
+			T ponder = black.pondermove();
 			
 			try {
 				exists = board.turn(move);

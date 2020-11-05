@@ -6,12 +6,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
-import javaChess.Session.ChessClock;
 import miscFunct.FileRead;
-import vanillaChess.AlgebraicMove;
-import vanillaChess.Game;
 
-public class Bot extends Player {
+public class Bot<T extends Move> extends Player<T> {
 
 	public static class UCIbot {
 		private static class Setting {
@@ -235,7 +232,7 @@ public class Bot extends Player {
 	final UCIbot bot;
 
 
-	public Bot(boolean white, Game game, String path) {
+	public Bot(boolean white, Game<T> game, String path) {
 		super(white, game);
 		bot = new UCIbot(path);
 		try {
@@ -249,7 +246,7 @@ public class Bot extends Player {
 	public void error(String s) {}
 
 	@Override
-	AlgebraicMove onTurn() {
+	T onTurn() {
 		try {
 			if(time.time(myTurn)==-1) bot.search(5000);
 			else bot.search(time.time(myTurn), time.time(!myTurn));
@@ -260,8 +257,9 @@ public class Bot extends Player {
 	}
 
 	@Override
-	AlgebraicMove offTurn() {
-		return new AlgebraicMove();
+	T offTurn() {
+		//noinspection unchecked
+		return (T) new Move();
 	}
 
 	@Override
@@ -288,7 +286,7 @@ public class Bot extends Player {
 
 
 	@Override
-	void updateScreen(AlgebraicMove m) {
+	void updateScreen(T m) {
 		bot.position(board.getFen());
 	}
 

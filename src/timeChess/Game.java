@@ -1,5 +1,6 @@
 package timeChess;
 
+import javaChess.InvalidMoveException;
 import miscFunct.FileRead;
 import vanillaChess.Pawn;
 import vanillaChess.King;
@@ -15,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Game {
+public class Game implements javaChess.Game<TimeMove> {
 	final String ab = "abcdefghijklmnopqrstuvwxyz";
 
 	private ArrayList<Character> boardDefault;
@@ -23,7 +24,7 @@ public class Game {
 	private King whiteKing;
 	private King blackKing;
 	private boolean whiteTurn;
-	private ArrayList<TimeAlgebraicMove> history;
+	private ArrayList<TimeMove> history;
 	private int halfMovesSinceAction;
 	private int fullMoves;
 	private String enPassantMove;
@@ -164,7 +165,9 @@ public class Game {
 				else bKing = (King) p;
 			}
 		}
+		assert wKing != null;
 		if(!wKing.hasMoved()) {
+			assert wKingside != null;
 			if(!wKingside.hasMoved()) result += "K";
 			if(!wQueenside.hasMoved()) result += "Q";
 		}
@@ -364,10 +367,10 @@ public class Game {
 			return !(check(whiteTurn) && trap(whiteTurn));
 		}
 	}
-	public TimeAlgebraicMove[] history() {
-		return history.toArray(new TimeAlgebraicMove[0]);
+	public TimeMove[] history() {
+		return history.toArray(new TimeMove[0]);
 	}
-	public boolean turn(TimeAlgebraicMove m) throws InvalidMoveException {
+	public boolean turn(TimeMove m) throws InvalidMoveException {
 		boolean result;
 		if(m.promote!=' ')//noinspection UnusedAssignment
 			result = turn(m.loc, m.origin, m.promote);
@@ -406,26 +409,25 @@ public class Game {
 		if(Character.isAlphabetic(move.charAt(0))&&
 				Character.isAlphabetic(move.charAt(2)))
 			return false;
-		if(Character.isDigit(move.charAt(1))&&
-		Character.isDigit(move.charAt(3))) return false;
-		return true;
+		return !Character.isDigit(move.charAt(1)) ||
+				!Character.isDigit(move.charAt(3));
 	}
 
-	public TimeAlgebraicMove decode(String move) {
-		if(move.length()==5)return new TimeAlgebraicMove(
+	public TimeMove decode(String move) {
+		if(move.length()==5)return new TimeMove(
 				denotate(move.substring(2, 4)),
 				denotate(move.substring(0, 2)),
 				move.charAt(4),
 				1);
 
-		return new TimeAlgebraicMove(denotate(move.substring(2, 4)), denotate(move.substring(0, 2)), 1);
+		return new TimeMove(denotate(move.substring(2, 4)), denotate(move.substring(0, 2)), 1);
 	}
 
 	private String code(int m) {
 		return ab.charAt(m % 8) + Integer.toString(1 + m / 8);
 	}
 
-	public String notate(TimeAlgebraicMove move) {
+	public String notate(TimeMove move) {
 		return code(move.origin) + code(move.loc);
 	}
 
