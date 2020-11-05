@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import miscFunct.ArrayMan;
 
 public class Piece {
-	protected int location;
-	protected final String name;
-	protected final char shorthand;
-	protected final boolean isFirst;
+	public int location;
+	public final String name;
+	public final char shorthand;
+	public final boolean isFirst;
 	protected boolean hasMoved = false;
 	final Integer[][] moves = {};
 
