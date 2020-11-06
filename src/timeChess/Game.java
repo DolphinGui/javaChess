@@ -28,6 +28,8 @@ public class Game {
 	private int fullMoves;
 	private String enPassantMove;
 
+
+
 	private void boardSet() {
 		int x = 0, y = internboard.getHeight()-1;
 		for (int i = 0; boardDefault.get(i)!=' '; i++) {

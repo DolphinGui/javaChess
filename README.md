@@ -40,7 +40,7 @@ Characters are also seperated by space.
 *l*: black  
 Capital letters denote the bright version of the color.  
 **Example**:  
-> 0 y Y l w W d 
+> y Y l w W d 
 
 ### Configuring RGB
 All characters are replaced with 9 digit numbers, 
@@ -50,4 +50,4 @@ and the last 3 denoting blue.
 **All numbers must be 9 digits long, no exceptions**
 Default is still *d*.  
 **Example**:  
-> 1 170085000 255255085 000000000 170170170 255255255 d  
+> 170085000 255255085 000000000 170170170 255255255 d  

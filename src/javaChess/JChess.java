@@ -26,7 +26,7 @@ public class JChess {
 				case 'b' -> {
 
 					game = new Session(screen, true, screen.findFile(
-							new File("assets/"),
+							new File("."),
 							"Choose bot binary",
 							(File f)-> f.canExecute()||!f.isHidden()).getPath());
 					game.play();

@@ -47,16 +47,19 @@ public class ChessDisplay {
 	boolean exists;
 	int sec;
 
-	private TextColor whiteTileColor;
-	private TextColor whitePieceColor;
-	private TextColor blackPieceColor;
-	private TextColor blackTileColor;
-	private TextColor foreground;
-	private TextColor background;
+	private final TextColor whiteTileColor;
+	private final TextColor whitePieceColor;
+	private final TextColor blackPieceColor;
+	private final TextColor blackTileColor;
+	private final TextColor foreground;
+	private final TextColor background;
 
 	final ArrayList<String[]> history;
+	private final TerminalPosition boardPosition;
 
-	private TerminalPosition boardPosition;
+	private int rankSelect; //row
+	private int fileSelect; //file
+
 	/*should just be a subclass,
 	 * but for some reason it made
 	 *  new terminals, so this is
@@ -69,8 +72,24 @@ public class ChessDisplay {
 		history = new ArrayList<>();
 		File f = new File("colors.cfg");
 		chess = c;
-		if(!f.exists()) config();
-		else config(configure(f));
+		if(!f.exists()) {
+			boardPosition = new TerminalPosition(10, 3);
+			whiteTileColor = TextColor.ANSI.YELLOW_BRIGHT;
+			whitePieceColor = TextColor.ANSI.WHITE;
+			blackTileColor = TextColor.ANSI.YELLOW;
+			blackPieceColor = TextColor.ANSI.BLACK;
+			foreground = TextColor.ANSI.WHITE;
+			background = TextColor.ANSI.DEFAULT;
+		}else {
+			TextColor[] colors = configure(f);
+			boardPosition = new TerminalPosition(10, 3);
+			whiteTileColor = colors[1]; // the array is black tile, white tile, black piece, and white piece in this
+			blackTileColor = colors[0]; // order.
+			whitePieceColor = colors[3];
+			blackPieceColor = colors[2];
+			foreground = colors[4];
+			background = colors[5];
+		}
 	}
 
 
@@ -101,23 +120,6 @@ public class ChessDisplay {
 					new TextCharacter((char) (i + 49), foreground, background));
 		}
 		return result;
-	}
-	private void config() {
-		boardPosition = new TerminalPosition(10, 3);
-		whiteTileColor = TextColor.ANSI.YELLOW_BRIGHT;
-		whitePieceColor = TextColor.ANSI.WHITE;
-		foreground = TextColor.ANSI.WHITE;
-		background = TextColor.ANSI.DEFAULT;
-	}
-
-	private void config(TextColor[] colors) {
-		boardPosition = new TerminalPosition(10, 3);
-		whiteTileColor = colors[1]; // the array is black tile, white tile, black piece, and white piece in this
-		blackTileColor = colors[0]; // order.
-		whitePieceColor = colors[3];
-		blackPieceColor = colors[2];
-		foreground = colors[4];
-		background = colors[5];
 	}
 
 	private TextColor[] configure(File f) {
@@ -272,6 +274,7 @@ public class ChessDisplay {
 		String move = "";
 		drawMove("moves:       ");
 		while (move.length() < 5) {
+			chess.screen.doResizeIfNecessary();
 			KeyStroke input;
 			try {
 				input = chess.screen.readInput();
