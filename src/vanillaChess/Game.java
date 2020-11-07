@@ -1,5 +1,7 @@
 package vanillaChess;
 
+import javaChess.Move;
+import javaChess.InvalidMoveException;
 import miscFunct.FileRead;
 
 import java.io.File;
@@ -7,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Game {
+public class Game implements javaChess.Game<Move> {
 	final String ab = "abcdefghijklmnopqrstuvwxyz";
 
 	private ArrayList<Character> boardDefault;
@@ -15,7 +17,7 @@ public class Game {
 	private King whiteKing;
 	private King blackKing;
 	private boolean whiteTurn;
-	private ArrayList<AlgebraicMove> history;
+	private ArrayList<Move> history;
 	private int halfMovesSinceAction;
 	private int fullMoves;
 	private String enPassantMove;
@@ -156,7 +158,9 @@ public class Game {
 				else bKing = (King) p;
 			}
 		}
+		assert wKing != null;
 		if(!wKing.hasMoved()) {
+			assert wKingside != null;
 			if(!wKingside.hasMoved()) result += "K";
 			if(!wQueenside.hasMoved()) result += "Q";
 		}
@@ -356,10 +360,10 @@ public class Game {
 			return !(check(whiteTurn) && trap(whiteTurn));
 		}
 	}
-	public AlgebraicMove[] history() {
-		return history.toArray(new AlgebraicMove[0]);
+	public Move[] history() {
+		return history.toArray(new Move[0]);
 	}
-	public boolean turn(AlgebraicMove m) throws InvalidMoveException {
+	public boolean turn(Move m) throws InvalidMoveException {
 		boolean result;
 		if(m.promote!=' ')//noinspection UnusedAssignment
 			result = turn(m.loc, m.origin, m.promote);
@@ -393,16 +397,16 @@ public class Game {
 		return result;
 	}
 
-	public AlgebraicMove decode(String move) {
-		if(move.length()==5)return new AlgebraicMove(denotate(move.substring(2, 4)), denotate(move.substring(0, 2)), move.charAt(4));
-		return new AlgebraicMove(denotate(move.substring(2, 4)), denotate(move.substring(0, 2)));
+	public Move decode(String move) {
+		if(move.length()==5)return new Move(denotate(move.substring(2, 4)), denotate(move.substring(0, 2)), move.charAt(4));
+		return new Move(denotate(move.substring(2, 4)), denotate(move.substring(0, 2)));
 	}
 
 	private String code(int m) {
 		return ab.charAt(m % 8) + Integer.toString(1 + m / 8);
 	}
 
-	public String notate(AlgebraicMove move) {
+	public String notate(Move move) {
 		return code(move.origin) + code(move.loc);
 	}
 

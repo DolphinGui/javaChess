@@ -1,8 +1,8 @@
-package vanillaChess;
+package javaChess;
 
 import java.io.Serializable;
 
-public class AlgebraicMove implements Serializable {
+public class Move implements Serializable {
 	/**
 	 * 
 	 */
@@ -10,18 +10,18 @@ public class AlgebraicMove implements Serializable {
 	public final int loc;
 	public final int origin;
 	public final char promote;
-	public AlgebraicMove(int l, int o, char p){
+	public Move(int l, int o, char p){
 		loc = l;
 		origin = o;
 		promote = p;
 	}
-	public AlgebraicMove(int l, int o){
+	public Move(int l, int o){
 		loc = l;
 		origin = o;
 		promote =' ';
 	}
 	
-	public AlgebraicMove() {
+	public Move() {
 		loc = 0;
 		origin = 0;
 		promote = '\n';
@@ -30,8 +30,8 @@ public class AlgebraicMove implements Serializable {
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
-		if(!(o instanceof AlgebraicMove)) return false;
-		AlgebraicMove m = (AlgebraicMove) o;
+		if(!(o instanceof Move)) return false;
+		Move m = (Move) o;
 		return m.loc==loc && m.origin==origin && m.promote==promote;
 	}
 	

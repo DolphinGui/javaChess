@@ -1,4 +1,4 @@
-package timeChess;
+package javaChess;
 
 public class InvalidMoveException extends Exception {
 	public InvalidMoveException() {

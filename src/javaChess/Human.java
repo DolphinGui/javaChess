@@ -2,24 +2,22 @@ package javaChess;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import javaChess.Session.ChessClock;
+
 import terminalChess.ChessDisplay;
 import terminalChess.Display;
-import vanillaChess.AlgebraicMove;
-import vanillaChess.Game;
 
-public class Human extends Player {
+public class Human<T extends Move> extends Player<T> {
 
 	final ChessDisplay screen;
 	
-	public Human(boolean white, Game game, Display s) {
+	public Human(boolean white, Game<T> game, Display s) {
 		super(white, game);
 		screen = new ChessDisplay(s);
 		screen.initGame(game.getCharBoard());
 	}
 
 	@Override
-	void updateScreen(AlgebraicMove m) {
+	void updateScreen(T m) {
 		try {
 			screen.turn(board.getCharBoard(), board.notate(m));
 		} catch (IOException e) {
@@ -29,14 +27,14 @@ public class Human extends Player {
 
 	
 	@Override
-	AlgebraicMove onTurn() {
-		
+	T onTurn() {
 		return board.decode(screen.listenGame());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	AlgebraicMove offTurn() {
-		return new AlgebraicMove();
+	T offTurn() {
+		return (T) new Move();
 	}
 
 	@Override
