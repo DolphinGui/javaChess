@@ -57,8 +57,8 @@ public class ChessDisplay {
 	final ArrayList<String[]> history;
 	private final TerminalPosition boardPosition;
 
-	private int rankSelect; //row
-	private int fileSelect; //file
+	// --Commented out by Inspection (2020-11-06, 5:52 p.m.):private int rankSelect; //row
+	// --Commented out by Inspection (2020-11-06, 5:52 p.m.):private int fileSelect; //file
 
 	/*should just be a subclass,
 	 * but for some reason it made

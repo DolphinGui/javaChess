@@ -7,9 +7,10 @@ import java.net.ProtocolException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+
 public class NetworkManager {
 
-	private ServerSocket serverSocket; 
+	private ServerSocket serverSocket;
 	private Socket clientSocket;
 
 	public DataInputStream input;
@@ -62,12 +63,14 @@ public class NetworkManager {
 		if(serverSocket!=null) {
 			serverSocket.close();
 		}
+
 		if(clientSocket!=null) {
 			clientSocket.close();
 		}
 		input.close();
 		output.close();
 	}
+
 
 
 	public void host(int port) throws IOException {

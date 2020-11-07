@@ -35,11 +35,7 @@ public class Bishop extends Piece {
 				move(board, false, false));
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	private Integer[] move(LinBoard board, boolean forward, boolean polarity) {
+    private Integer[] move(LinBoard board, boolean forward, boolean polarity) {
 		ArrayList<Integer> moves = new ArrayList<>();
 
 		int increment = -1;

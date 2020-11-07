@@ -26,11 +26,7 @@ public class Rook extends Piece {
 				move(board, true, false));
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public char getShort() {
+    public char getShort() {
 		return shorthand;
 	}
 

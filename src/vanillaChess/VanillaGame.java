@@ -1,22 +1,14 @@
-package timeChess;
+package vanillaChess;
 
 import javaChess.InvalidMoveException;
 import miscFunct.FileRead;
-import vanillaChess.Pawn;
-import vanillaChess.King;
-import vanillaChess.Rook;
-import vanillaChess.Queen;
-import vanillaChess.Bishop;
-import vanillaChess.Knight;
-import vanillaChess.Piece;
-import vanillaChess.LinBoard;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Game implements javaChess.Game<TimeMove> {
+public class VanillaGame implements javaChess.Game<LinearMove, Integer> {
 	final String ab = "abcdefghijklmnopqrstuvwxyz";
 
 	private ArrayList<Character> boardDefault;
@@ -24,12 +16,10 @@ public class Game implements javaChess.Game<TimeMove> {
 	private King whiteKing;
 	private King blackKing;
 	private boolean whiteTurn;
-	private ArrayList<TimeMove> history;
+	private ArrayList<LinearMove> history;
 	private int halfMovesSinceAction;
 	private int fullMoves;
 	private String enPassantMove;
-
-
 
 	private void boardSet() {
 		int x = 0, y = internboard.getHeight()-1;
@@ -154,7 +144,7 @@ public class Game implements javaChess.Game<TimeMove> {
 		for(Piece p : board.getBoard()) { 
 			if(p instanceof Rook) {
 				if(!p.hasMoved()) {
-					if(p.isFirst) {
+					if(p.isFirst) { 
 						if(wQueenside==null) wQueenside = (Rook) p;
 						wKingside = (Rook) p;
 					}else {
@@ -183,7 +173,7 @@ public class Game implements javaChess.Game<TimeMove> {
 		return result;
 	}
 
-	/** (k)ing's position, then (r)ook's position.*/
+	// (k)ing's position, then (r)ook's position.
 	private void castle(int k, int r, LinBoard board) throws InvalidMoveException {
 		Piece king = board.getPiece(k);
 		Piece rook = board.getPiece(r);
@@ -292,10 +282,15 @@ public class Game implements javaChess.Game<TimeMove> {
 	}
 
 	private void enPassant(int loc, int origin, LinBoard board) throws InvalidMoveException {
-		if(board.getPiece(origin) instanceof Pawn && board.getPiece(loc - board.getWidth()) instanceof Pawn) {
+		if( !(board.getPiece(origin) instanceof Pawn) ||
+				!((Pawn) board.getPiece(origin)).passant())
+			throw new InvalidMoveException("Invalid Passant");
+		if(board.getPiece(origin) instanceof Pawn &&
+				board.getPiece(loc - board.getWidth()) instanceof Pawn) {
 			set(loc, origin, board);
 			board.set(loc - board.getWidth(), null);
-		}else if(board.getPiece(origin) instanceof Pawn && board.getPiece(loc + board.getWidth()) instanceof Pawn){
+		}else if(board.getPiece(origin) instanceof Pawn &&
+				board.getPiece(loc + board.getWidth()) instanceof Pawn){
 			set(loc, origin, board);
 			board.set(loc + board.getWidth(), null);
 		}else{
@@ -369,24 +364,25 @@ public class Game implements javaChess.Game<TimeMove> {
 			return !(check(whiteTurn) && trap(whiteTurn));
 		}
 	}
-	public TimeMove[] history() {
-		return history.toArray(new TimeMove[0]);
+
+	public LinearMove[] history() {
+		return history.toArray(new LinearMove[0]);
 	}
-	public boolean turn(TimeMove m) throws InvalidMoveException {
+	public boolean turn(LinearMove m) throws InvalidMoveException {
 		boolean result;
 		if(m.promote!=' ')//noinspection UnusedAssignment
-			result = turn(m.loc, m.origin, m.promote);
-		result = turn(m.loc, m.origin);
+			result = turn(m.location, m.origin, m.promote);
+		result = turn(m.location, m.origin);
 		history.add(m);
-		if(internboard.getPiece(m.loc) instanceof Pawn 
-				|| internboard.getPiece(m.loc) != null)
+		if(internboard.getPiece(m.location) instanceof Pawn
+				|| internboard.getPiece(m.location) != null)
 			halfMovesSinceAction = 0;
 		else halfMovesSinceAction++;
-		if(internboard.getPiece(m.loc) instanceof Pawn) {
+		if(internboard.getPiece(m.location) instanceof Pawn) {
 			int i;
-			if(internboard.getPiece(m.loc).isFirst) i = -internboard.getWidth();
+			if(internboard.getPiece(m.location).isFirst) i = -internboard.getWidth();
 			else i = internboard.getWidth();
-			enPassantMove = code(m.loc + i);
+			enPassantMove = code(m.location + i);
 		}
 		if(whiteTurn) fullMoves++;
 		return result;
@@ -406,31 +402,17 @@ public class Game implements javaChess.Game<TimeMove> {
 		return result;
 	}
 
-	public boolean qualifyMove(String move){
-		if(move.length()<4) return false;
-		if(Character.isAlphabetic(move.charAt(0))&&
-				Character.isAlphabetic(move.charAt(2)))
-			return false;
-		return !Character.isDigit(move.charAt(1)) ||
-				!Character.isDigit(move.charAt(3));
-	}
-
-	public TimeMove decode(String move) {
-		if(move.length()==5)return new TimeMove(
-				denotate(move.substring(2, 4)),
-				denotate(move.substring(0, 2)),
-				move.charAt(4),
-				1);
-
-		return new TimeMove(denotate(move.substring(2, 4)), denotate(move.substring(0, 2)), 1);
+	public LinearMove decode(String move) {
+		if(move.length()==5)return new LinearMove(denotate(move.substring(2, 4)), denotate(move.substring(0, 2)), move.charAt(4));
+		return new LinearMove(denotate(move.substring(2, 4)), denotate(move.substring(0, 2)));
 	}
 
 	private String code(int m) {
 		return ab.charAt(m % 8) + Integer.toString(1 + m / 8);
 	}
 
-	public String notate(TimeMove move) {
-		return code(move.origin) + code(move.loc);
+	public String notate(LinearMove linearMove) {
+		return code(linearMove.origin) + code(linearMove.location);
 	}
 
 }

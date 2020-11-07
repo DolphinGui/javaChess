@@ -1,16 +1,16 @@
 package javaChess;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import terminalChess.ChessDisplay;
 import terminalChess.Display;
 
-public class Human<T extends Move> extends Player<T> {
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+public class Human<T extends Move<E>, E> extends Player<T, E> {
 
 	final ChessDisplay screen;
 	
-	public Human(boolean white, Game<T> game, Display s) {
+	public Human(boolean white, Game<T, E> game, Display s) {
 		super(white, game);
 		screen = new ChessDisplay(s);
 		screen.initGame(game.getCharBoard());
@@ -31,10 +31,9 @@ public class Human<T extends Move> extends Player<T> {
 		return board.decode(screen.listenGame());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	T offTurn() {
-		return (T) new Move();
+		return null;
 	}
 
 	@Override

@@ -67,9 +67,11 @@ public class LinBoard {
 		return loc/files;
 	}
 
-	public int toCol(int loc) {
-		return loc%ranks;
-	}
+// --Commented out by Inspection START (2020-11-06, 5:53 p.m.):
+//	public int toCol(int loc) {
+//		return loc%ranks;
+//	}
+// --Commented out by Inspection STOP (2020-11-06, 5:53 p.m.)
 
 	public char[][] getCharBoard() {
 		char[][] results = new char[ranks][files];
@@ -103,6 +105,7 @@ public class LinBoard {
 	public Piece getPiece(int loc) {
 		if (!inBounds(loc))
 			return null;
+
 		return board[loc];
 	}
 
@@ -110,17 +113,10 @@ public class LinBoard {
 		return board[vecToInteger(vec) + vecToInteger(coord)];
 	}
 
-	public Piece[] getPieces() {
-		ArrayList<Piece> results = new ArrayList<>();
-		for (Piece p : board) {
-			if (p != null)
-				results.add(p);
-		}
-		return results.toArray(new Piece[0]);
-	}
 
 	public Piece[] getPieces(boolean fealty) {
 		ArrayList<Piece> results = new ArrayList<>();
+
 		for (Piece p : board) {
 			if (p != null)
 				if (p.getFealty() == fealty)
@@ -130,6 +126,7 @@ public class LinBoard {
 	}
 
 	public int getWidth() {
+
 		return files;
 	}
 
@@ -138,12 +135,12 @@ public class LinBoard {
 			return false;
 		return loc >= 0;
 	}
-
+	/*
 	public boolean inBounds(Integer[] location) {
 		if (location[0] >= files)
 			return false;
 		return location[1] < ranks;
-	}
+	}*/
 
 	public boolean inBounds(Integer[] location, Integer[] vector) {
 		if (location[0] + vector[0] >= files || location[0] + vector[0] < 0)
@@ -159,11 +156,7 @@ public class LinBoard {
 		return vector;
 	}
 
-	public void remove(int loc) {
-		board[loc] = null;
-	}
-
-	public void set(int loc, Piece piece) {
+    public void set(int loc, Piece piece) {
 		board[loc] = piece;
 	}
 

@@ -47,10 +47,6 @@ public class Piece {
 		return ArrayMan.concatAll(validator(board), exception(board));
 	}
 
-	public String getName() {
-		return name;
-	}
-
 	public int getRow() {
 		return Math.floorDiv(location, 8);
 	}

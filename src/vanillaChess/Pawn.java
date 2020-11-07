@@ -5,7 +5,6 @@ import miscFunct.ArrayMan;
 import java.util.ArrayList;
 
 public class Pawn extends Piece {
-	private final static String name = "Pawn";
 	private final static char shorthand = 'p';
 	private boolean hasMoved = false;
 	private boolean passant = false;
@@ -51,11 +50,7 @@ public class Pawn extends Piece {
 		return ArrayMan.concatAll(capture(board), initiative(board), advance(board));
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public char getShort() {
+    public char getShort() {
 		return shorthand;
 	}
 
@@ -74,13 +69,11 @@ public class Pawn extends Piece {
 	public boolean passant() {
 		return passant;
 	}
-	
+
+
 	public void setLoc(int loc) {
-		if(location == initialLoc) {
-			passant = true;
-		}
-		location = loc;
 		hasMoved = false;
-		passant = false;
+		passant = location == initialLoc;
+		location = loc;
 	}
 }

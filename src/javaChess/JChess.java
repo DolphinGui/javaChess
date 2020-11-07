@@ -1,10 +1,10 @@
 package javaChess;
 
+import terminalChess.Display;
+import vanillaChess.VanillaGame;
+
 import java.io.File;
 import java.io.IOException;
-
-import terminalChess.Display;
-import vanillaChess.Game;
 
 public class JChess {
 
@@ -18,18 +18,17 @@ public class JChess {
 			screen = new Display();
 
 			char choice = screen.initStart();
-			Session<Move> game;
 			switch (choice) {
 				case 'l' -> {
-					game = new Session<>(screen, screen, new Game());
+					Session<?,?> game = new Session<>(screen, screen, new VanillaGame());
 					game.play();
 				}
 				case 'b' -> {
-					game = new Session<>(screen, true, screen.findFile(
+					Session<?,?> game = new Session<>(screen, true, screen.findFile(
 							new File("."),
 							"Choose bot binary",
 							(File f)-> f.canExecute()||!f.isHidden()).getPath(),
-							new Game());
+							new VanillaGame());
 					game.play();
 				}
 			}

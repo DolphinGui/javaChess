@@ -2,16 +2,16 @@ package javaChess;
 
 import terminalChess.Display;
 
-public class Session<T extends Move> {
+public class Session<T extends Move<E>, E> {
 	@SuppressWarnings("BusyWait")
-	public static class ChessClock<T extends Move> implements Runnable{
+	public static class ChessClock<T extends Move<E>, E> implements Runnable{
 		private boolean exists;
-		private final Player<T> player1;
-		private final Player<T> player2;
+		private final Player<T, E> player1;
+		private final Player<T, E> player2;
 		private boolean isWhite;
 		private int wTime;
 		private int bTime;
-		public ChessClock(Player<T> p1, Player<T> p2, int w, int b) {
+		public ChessClock(Player<T, E> p1, Player<T, E> p2, int w, int b) {
 			player1 = p1;
 			player2 = p2;
 			wTime = w;
@@ -55,16 +55,16 @@ public class Session<T extends Move> {
 
 	}
 
-	final Player<T> black;
-	final Player<T> white;
-	final Game<T> board;
-	final ChessClock<T> time;
+	final Player<T, E> black;
+	final Player<T, E> white;
+	final Game<T, E> board;
+	final ChessClock<T, E> time;
 
-	public Session(Display db, Display dw, Game<T> g) {
+	public Session(Display db, Display dw, Game<T, E> g) {
 		this(db, dw, -1, -1, g);
 	}
 
-	public Session(Display db, Display dw, int b, int w, Game<T> g) {
+	public Session(Display db, Display dw, int b, int w, Game<T, E> g) {
 		board = g;
 		board.init();
 		black = new Human<>(false, board, db);
@@ -74,11 +74,11 @@ public class Session<T extends Move> {
 		white.setClock(time);
 	}
 
-	public Session(Display d, boolean isHumanWhite, String botPath, Game<T> g){
+	public Session(Display d, boolean isHumanWhite, String botPath, Game<T, E> g){
 		this(d, -1, -1, isHumanWhite, botPath, g);
 	}
 
-	public Session(Display d, int b, int w, boolean isHumanWhite, String botPath, Game<T> g) {
+	public Session(Display d, int b, int w, boolean isHumanWhite, String botPath, Game<T, E> g) {
 		board = g;
 		board.init();
 		if(isHumanWhite) {
@@ -118,7 +118,7 @@ public class Session<T extends Move> {
 				exists = board.turn(move);
 				black.updateScreen(move);
 				white.updateScreen(move);
-				if(ponder.equals(move)) black.ponderhit();
+				if(ponder!=null && ponder.equals(move)) black.ponderhit();
 				black.switchTurns();
 				white.switchTurns();
 				whiteTurn = !whiteTurn;

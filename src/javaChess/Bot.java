@@ -4,18 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 
-import miscFunct.FileRead;
-
-public class Bot<T extends Move> extends Player<T> {
+public class Bot<T extends Move<E>, E> extends Player<T, E> {
 
 	public static class UCIbot {
+		/*
 		private static class Setting {
 			final UCITypes type;
 			final String str;
-			final int min;
-			final int max;
+			// --Commented out by Inspection (2020-11-06, 5:52 p.m.):final int min;
+			// --Commented out by Inspection (2020-11-06, 5:52 p.m.):final int max;
 			final String[] vars;
 			final String name;
 
@@ -64,33 +62,35 @@ public class Bot<T extends Move> extends Player<T> {
 			}
 
 			// Constructs combo
-			public Setting(String n, String[] v, int i) {
-				name = n;
-				type = UCITypes.combo;
-				vars = v;
-				str = vars[i];
-			min = -1;
-			max = -1;
-			}
-
-			// Returns the command with a \n.
-			public String parse() {
-				String result = "setoption name " + name;
+// --Commented out by Inspection START (2020-11-06, 5:52 p.m.):
+//			public Setting(String n, String[] v, int i) {
+//				name = n;
+//				type = UCITypes.combo;
+//				vars = v;
+//				str = vars[i];
+//			min = -1;
+//			max = -1;
+//			}
+//
+//			// Returns the command with a \n.
+//			public String parse() {
+//				String result = "setoption name " + name;
+// --Commented out by Inspection STOP (2020-11-06, 5:52 p.m.)
 				if (type != UCITypes.button) {
 					result = result.concat(" value " + str);
 				}
 				return result;
 			}
 
-		}
+		}*/
 		static final private String nl = System.lineSeparator();
 		private Process bot;
 		private InputStream out;
 		private OutputStreamWriter write;
 		private String lastmove;
-		private String pondermove;
+		// --Commented out by Inspection (2020-11-06, 5:52 p.m.):private String pondermove;
 
-		ArrayList<Setting> options;
+		//ArrayList<Setting> options;
 
 		public UCIbot(String path) {
 			try {
@@ -113,9 +113,10 @@ public class Bot<T extends Move> extends Player<T> {
 			readAll();
 			writeFlush("uci");
 			String buffer = readAll();
+			/*
 			ArrayList<Integer> nameIndex = new ArrayList<>();
 			ArrayList<Integer> typeIndex = new ArrayList<>();
-			options = new ArrayList<>();
+			//options = new ArrayList<>();
 			int lastindex = 0;
 			do {
 				nameIndex.add(buffer.indexOf("option name", lastindex + 1));
@@ -166,9 +167,9 @@ public class Bot<T extends Move> extends Player<T> {
 					case button -> options.add(new Setting(name));
 					case string -> options.add(new Setting(name, def));
 				}
-			}
+			}*/
 		}
-
+		/*
 		private UCITypes parseType(String s) {
 			return switch (s.toLowerCase()) {
 				case "check" -> UCITypes.check;
@@ -178,7 +179,7 @@ public class Bot<T extends Move> extends Player<T> {
 				case "string" -> UCITypes.string;
 				default -> null;
 			};
-		}
+		}*/
 
 		public void position(String fen) {
 			writeFlush("position fen " + fen);
@@ -189,7 +190,7 @@ public class Bot<T extends Move> extends Player<T> {
 			String ind = until(out);
 			String answer = ind + readAll();
 			lastmove = answer.substring(9, answer.indexOf("ponder "));
-			pondermove = answer.substring(answer.indexOf("ponder ") + 7);
+			//pondermove = answer.substring(answer.indexOf("ponder ") + 7);
 		}
 		
 		public void search(int millisecond) throws IOException {
@@ -197,7 +198,7 @@ public class Bot<T extends Move> extends Player<T> {
 			String ind = until(out);
 			String answer = ind + readAll();
 			lastmove = answer.substring(9, answer.indexOf("ponder "));
-			pondermove = answer.substring(answer.indexOf("ponder ") + 7);
+			//pondermove = answer.substring(answer.indexOf("ponder ") + 7);
 		}
 		
 		private static String until(InputStream out) throws IOException {
@@ -232,7 +233,7 @@ public class Bot<T extends Move> extends Player<T> {
 	final UCIbot bot;
 
 
-	public Bot(boolean white, Game<T> game, String path) {
+	public Bot(boolean white, Game<T, E> game, String path) {
 		super(white, game);
 		bot = new UCIbot(path);
 		try {
@@ -258,8 +259,7 @@ public class Bot<T extends Move> extends Player<T> {
 
 	@Override
 	T offTurn() {
-		//noinspection unchecked
-		return (T) new Move();
+		return null;
 	}
 
 	@Override

@@ -3,14 +3,14 @@ package javaChess;
 
 import javaChess.Session.ChessClock;
 
-public abstract class Player<T extends Move> implements Runnable {
+public abstract class Player<T extends Move<E>, E> implements Runnable {
 	public final boolean isWhite;
-	public final Game<T> board;
+	public final Game<T, E> board;
 	protected boolean myTurn;
 	//private boolean exists;
 	protected final T lastmove;
 	protected T ponder;
-	protected ChessClock<T> time;
+	protected ChessClock<T, E> time;
 
 	public T lastMove() {
 		return lastmove;
@@ -20,16 +20,15 @@ public abstract class Player<T extends Move> implements Runnable {
 		return ponder;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public Player(boolean white, Game<T> game) {
+	public Player(boolean white, Game<T, E> game) {
 		isWhite = white;
 		board = game;
 		myTurn = white;
-		ponder = (T) new Move();
-		lastmove = (T) new Move();
+		ponder = null;
+		lastmove = null;
 	}
 
-	public void setClock(ChessClock<T> c){
+	public void setClock(ChessClock<T, E> c){
 		time = c;
 	}
 
